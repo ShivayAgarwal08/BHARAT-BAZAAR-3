@@ -48,6 +48,14 @@ export function marketplaceRoutes(db: Database, config: Environment) {
     c.browse,
   );
   r.get('/marketplace/students/:id', auth, artisan, envelope(undefined, undefined, id), c.student);
+  r.get('/participants/me/paid-contracts', auth, envelope(), c.participantPaidContracts);
+  r.get('/contracts/:id', auth, envelope(undefined, undefined, id), c.paidContractDetail);
+  r.get('/students/me/portfolio', auth, student, envelope(), c.portfolio);
+  r.get('/admin/paid-assignments', auth, admin, envelope(), c.adminPaidAssignments);
+  r.get('/admin/paid-contracts', auth, admin, envelope(), c.adminPaidContracts);
+  r.get('/admin/payment-records', auth, admin, envelope(), c.adminPayments);
+  r.get('/admin/reviews', auth, admin, envelope(), c.adminReviews);
+  r.get('/admin/completions', auth, admin, envelope(), c.adminCompletions);
   r.post(
     '/artisans/me/marketplace-requests',
     auth,

@@ -250,6 +250,8 @@
     "adminNote": "The admin option is a demo workspace, not public admin registration."
   },
   "dashboard": {
+    "marketplace": "Marketplace",
+    "marketplaceRequests": "Interest requests",
     "workspace": "Workspace",
     "overview": "Overview",
     "myManager": "My Manager",
@@ -272,6 +274,10 @@
     "students": "Students",
     "matching": "Matching",
     "disputes": "Disputes",
+    "paidAssignments": "Paid Assignments",
+    "paidContracts": "Paid Contracts",
+    "paymentRecords": "Payment Records",
+    "completionRequests": "Completion Requests",
     "welcome": "A little progress, every day.",
     "hello": "Welcome, {{name}}",
     "overviewText": "Here’s a glimpse of how your growth journey will come together.",
@@ -341,6 +347,22 @@
       }
     ],
     "profile": "My profile"
+  },
+  "phase4": {
+    "noRecords": "No records found",
+    "noRecordsText": "Records will appear here when available.",
+    "status": "Status",
+    "contractType": "Contract type",
+    "paymentMethod": "Payment method",
+    "amount": "Amount",
+    "deliverables": "Deliverables",
+    "dates": "Start and end dates",
+    "completionStatus": "Completion status",
+    "discovery": "Discovery summary",
+    "reviews": "Reviews",
+    "rating": "Rating",
+    "hidden": "Hidden",
+    "visible": "Visible"
   },
   "notFound": {
     "eyebrow": "404 · A SMALL DETOUR",

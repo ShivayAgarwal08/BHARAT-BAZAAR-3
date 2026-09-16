@@ -34,6 +34,18 @@ export function marketplaceControllers(db: Database) {
       marketplace.marketplaceStudents(db, query),
     ),
     student: action(({ params }) => marketplace.marketplaceStudent(db, params.id)),
+    adminPaidAssignments: action(() => marketplace.paidAssignmentsForAdmin(db)),
+    adminPaidContracts: action(() => marketplace.paidContractsForAdmin(db)),
+    adminPayments: action(() => marketplace.paymentRecordsForAdmin(db)),
+    adminReviews: action(() => marketplace.reviewsForAdmin(db)),
+    adminCompletions: action(() => marketplace.completionsForAdmin(db)),
+    participantPaidContracts: action(({ actor }) =>
+      marketplace.paidContractsForParticipant(db, actor.id),
+    ),
+    paidContractDetail: action(({ actor, params }) =>
+      marketplace.paidContractDetail(db, actor.id, actor.role, params.id),
+    ),
+    portfolio: action(({ actor }) => marketplace.verifiedPortfolioForStudent(db, actor.id)),
     request: action<z.output<typeof marketplaceRequestSchema>>(
       ({ actor, body }) => marketplace.createMarketplaceRequest(db, actor.id, body),
       201,

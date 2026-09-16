@@ -250,6 +250,8 @@
     "adminNote": "एडमिन विकल्प केवल डेमो कार्यक्षेत्र है, सार्वजनिक एडमिन पंजीकरण नहीं।"
   },
   "dashboard": {
+    "marketplace": "मार्केटप्लेस",
+    "marketplaceRequests": "रुचि अनुरोध",
     "workspace": "कार्यक्षेत्र",
     "overview": "अवलोकन",
     "myManager": "मेरे मैनेजर",
@@ -272,6 +274,10 @@
     "students": "छात्र",
     "matching": "मिलान",
     "disputes": "विवाद",
+    "paidAssignments": "सवेतन असाइनमेंट",
+    "paidContracts": "सवेतन अनुबंध",
+    "paymentRecords": "भुगतान रिकॉर्ड",
+    "completionRequests": "पूर्णता अनुरोध",
     "welcome": "हर दिन, थोड़ी प्रगति।",
     "hello": "स्वागत है, {{name}}",
     "overviewText": "आपका विकास का सफ़र कैसे आगे बढ़ेगा, इसकी एक झलक।",
@@ -341,6 +347,22 @@
       }
     ],
     "profile": "मेरी प्रोफ़ाइल"
+  },
+  "phase4": {
+    "noRecords": "कोई रिकॉर्ड नहीं मिला",
+    "noRecordsText": "रिकॉर्ड उपलब्ध होने पर यहाँ दिखाई देंगे।",
+    "status": "स्थिति",
+    "contractType": "अनुबंध प्रकार",
+    "paymentMethod": "भुगतान विधि",
+    "amount": "राशि",
+    "deliverables": "डिलिवरेबल्स",
+    "dates": "आरंभ और समाप्ति तिथियाँ",
+    "completionStatus": "पूर्णता स्थिति",
+    "discovery": "डिस्कवरी सारांश",
+    "reviews": "समीक्षाएँ",
+    "rating": "रेटिंग",
+    "hidden": "छिपा हुआ",
+    "visible": "दृश्यमान"
   },
   "notFound": {
     "eyebrow": "404 · एक छोटा मोड़",

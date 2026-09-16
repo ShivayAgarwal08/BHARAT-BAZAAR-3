@@ -1,4 +1,4 @@
-import { and, asc, avg, count, desc, eq, inArray } from 'drizzle-orm';
+import { and, asc, avg, count, desc, eq, inArray, or } from 'drizzle-orm';
 import type { Database } from '../db/index.js';
 import {
   artisanProfiles,
@@ -53,6 +53,12 @@ async function peopleForContract(db: Database, contractId: string) {
 async function participantContract(db: Database, contractId: string, userId: string) {
   const data = await peopleForContract(db, contractId);
   if (data.artisan.userId !== userId && data.student.userId !== userId)
+    throw new AppError(403, 'This contract is not yours.', 'FORBIDDEN');
+  return data;
+}
+async function contractForActor(db: Database, contractId: string, userId: string, role: string) {
+  const data = await peopleForContract(db, contractId);
+  if (role !== 'ADMIN' && data.artisan.userId !== userId && data.student.userId !== userId)
     throw new AppError(403, 'This contract is not yours.', 'FORBIDDEN');
   return data;
 }
@@ -209,6 +215,138 @@ export async function marketplaceStudent(db: Database, id: string) {
       proficiencyLevel: x.proficiencyLevel,
     })),
   };
+}
+
+// Read models intentionally select professional context only. Email, phone, addresses,
+// password hashes and payment-proof binary data are never included in these responses.
+export async function paidAssignmentsForAdmin(db: Database) {
+  return db
+    .select({
+      assignment: assignments,
+      artisan: artisanProfiles,
+      student: studentProfiles,
+      request: marketplaceRequests,
+    })
+    .from(assignments)
+    .innerJoin(artisanProfiles, eq(artisanProfiles.id, assignments.artisanProfileId))
+    .innerJoin(studentProfiles, eq(studentProfiles.id, assignments.studentProfileId))
+    .leftJoin(marketplaceRequests, eq(marketplaceRequests.id, assignments.marketplaceRequestId))
+    .where(eq(assignments.type, 'PAID'))
+    .orderBy(desc(assignments.createdAt));
+}
+export async function paidContractsForAdmin(db: Database) {
+  return db
+    .select({
+      contract: contracts,
+      assignment: assignments,
+      artisan: artisanProfiles,
+      student: studentProfiles,
+    })
+    .from(contracts)
+    .innerJoin(assignments, eq(assignments.id, contracts.assignmentId))
+    .innerJoin(artisanProfiles, eq(artisanProfiles.id, assignments.artisanProfileId))
+    .innerJoin(studentProfiles, eq(studentProfiles.id, assignments.studentProfileId))
+    .where(eq(contracts.contractType, 'PAID'))
+    .orderBy(desc(contracts.updatedAt));
+}
+export async function paymentRecordsForAdmin(db: Database) {
+  const rows = await db
+    .select({
+      payment: paymentRecords,
+      contract: contracts,
+      artisan: artisanProfiles,
+      student: studentProfiles,
+    })
+    .from(paymentRecords)
+    .innerJoin(contracts, eq(contracts.id, paymentRecords.contractId))
+    .innerJoin(assignments, eq(assignments.id, contracts.assignmentId))
+    .innerJoin(artisanProfiles, eq(artisanProfiles.id, assignments.artisanProfileId))
+    .innerJoin(studentProfiles, eq(studentProfiles.id, assignments.studentProfileId))
+    .orderBy(desc(paymentRecords.updatedAt));
+  const proofIds = rows.length ? rows.map((row) => row.payment.id) : [];
+  const proofRows = proofIds.length
+    ? await db
+        .select({ paymentRecordId: paymentProofs.paymentRecordId })
+        .from(paymentProofs)
+        .where(inArray(paymentProofs.paymentRecordId, proofIds))
+    : [];
+  return rows.map((row) => ({
+    ...row,
+    hasPrivateProof: proofRows.some((proof) => proof.paymentRecordId === row.payment.id),
+  }));
+}
+export async function reviewsForAdmin(db: Database) {
+  return db.select().from(reviews).orderBy(desc(reviews.createdAt));
+}
+export async function completionsForAdmin(db: Database) {
+  return db
+    .select({
+      completion: contractCompletionRecords,
+      contract: contracts,
+      assignment: assignments,
+      artisan: artisanProfiles,
+      student: studentProfiles,
+    })
+    .from(contractCompletionRecords)
+    .innerJoin(contracts, eq(contracts.id, contractCompletionRecords.contractId))
+    .innerJoin(assignments, eq(assignments.id, contracts.assignmentId))
+    .innerJoin(artisanProfiles, eq(artisanProfiles.id, assignments.artisanProfileId))
+    .innerJoin(studentProfiles, eq(studentProfiles.id, assignments.studentProfileId))
+    .orderBy(desc(contractCompletionRecords.createdAt));
+}
+export async function paidContractsForParticipant(db: Database, userId: string) {
+  const [artisanProfile] = await db
+    .select()
+    .from(artisanProfiles)
+    .where(eq(artisanProfiles.userId, userId));
+  const [studentProfile] = await db
+    .select()
+    .from(studentProfiles)
+    .where(eq(studentProfiles.userId, userId));
+  if (!artisanProfile && !studentProfile)
+    throw new AppError(403, 'A participant profile is required.', 'FORBIDDEN');
+  const filter = or(
+    artisanProfile ? eq(assignments.artisanProfileId, artisanProfile.id) : undefined,
+    studentProfile ? eq(assignments.studentProfileId, studentProfile.id) : undefined,
+  );
+  return db
+    .select({
+      contract: contracts,
+      assignment: assignments,
+      artisan: artisanProfiles,
+      student: studentProfiles,
+    })
+    .from(contracts)
+    .innerJoin(assignments, eq(assignments.id, contracts.assignmentId))
+    .innerJoin(artisanProfiles, eq(artisanProfiles.id, assignments.artisanProfileId))
+    .innerJoin(studentProfiles, eq(studentProfiles.id, assignments.studentProfileId))
+    .where(and(eq(contracts.contractType, 'PAID'), filter))
+    .orderBy(desc(contracts.updatedAt));
+}
+export async function paidContractDetail(
+  db: Database,
+  userId: string,
+  role: string,
+  contractId: string,
+) {
+  const data = await contractForActor(db, contractId, userId, role);
+  if (data.contract.contractType !== 'PAID')
+    throw new AppError(404, 'Paid contract not found.', 'NOT_FOUND');
+  const [discovery] = await db
+    .select()
+    .from(discoveryReports)
+    .where(eq(discoveryReports.assignmentId, data.assignment.id));
+  return { ...data, discovery };
+}
+export async function verifiedPortfolioForStudent(db: Database, userId: string) {
+  const profile = await student(db, userId);
+  return db
+    .select({ contract: contracts, assignment: assignments, artisan: artisanProfiles })
+    .from(contracts)
+    .innerJoin(assignments, eq(assignments.id, contracts.assignmentId))
+    .innerJoin(artisanProfiles, eq(artisanProfiles.id, assignments.artisanProfileId))
+    .where(and(eq(assignments.studentProfileId, profile.id), eq(contracts.status, 'COMPLETED')))
+    .orderBy(desc(contracts.updatedAt));
 }
 export async function createMarketplaceRequest(
   db: Database,

@@ -22,6 +22,7 @@ export const envSchema = z.object({
       const url = new URL(value);
       return ['http:', 'https:'].includes(url.protocol) && url.origin === value;
     }, 'CLIENT_URL must be an HTTP(S) origin without a trailing slash or path'),
+  CLIENT_URLS: optionalValue(z.string().max(4000)),
   DATABASE_URL: optionalValue(postgresUrl),
   DATABASE_URL_UNPOOLED: optionalValue(postgresUrl),
   JWT_SECRET: optionalValue(z.string().min(32)),

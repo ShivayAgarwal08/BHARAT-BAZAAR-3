@@ -10,7 +10,7 @@ Implemented: real accounts, Bearer JWT authentication, server-side role authoriz
 
 Phase 4 adds a verified-student marketplace, artisan interest requests, paid assignments/contracts, external-payment evidence, private proof storage, confirmation, completion, reviews and disputes. Bharat Bazaar never processes or holds money.
 
-See [Phase 4 report](docs/phase-4-report.md), [Phase 3 report](docs/phase-3-report.md), [API reference](docs/api.md), and [architecture](docs/architecture.md).
+See [Phase 5 report](docs/phase-5-report.md), [Phase 4 report](docs/phase-4-report.md), [API reference](docs/api.md), [architecture](docs/architecture.md), and [deployment](docs/deployment.md).
 
 ## Technology
 

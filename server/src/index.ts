@@ -9,7 +9,7 @@ const database = createDatabase(env.DATABASE_URL);
 
 const server = createApp(env, database.db).listen(env.PORT, () => {
   console.info(`Bharat Bazaar API: http://localhost:${env.PORT}/api/health`);
-  console.info('Phase 3: managed free-trial workflow enabled.');
+  console.info('Phase 5: managed marketplace and deployment-ready API enabled.');
 });
 
 server.on('error', (error: NodeJS.ErrnoException) => {

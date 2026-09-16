@@ -17,7 +17,7 @@ export function createApp(config: Environment, db?: Database) {
   app.use(helmet());
   // Log the method and status only; URLs/query strings can contain sensitive information.
   if (config.NODE_ENV !== 'test') app.use(morgan(':method :status :response-time ms'));
-  app.use(cors(createCorsOptions(config.CLIENT_URL)));
+  app.use(cors(createCorsOptions(config)));
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRoutes);
   app.use('/api/v1', v1Routes);
