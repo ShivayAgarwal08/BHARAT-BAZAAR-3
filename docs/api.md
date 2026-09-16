@@ -1,5 +1,13 @@
 # Phase 3 API reference
 
+## Phase 4 marketplace and payment endpoints
+
+`GET /marketplace/students` and `/marketplace/students/:id` expose verified student cards without phone/email. Artisans use `POST/GET /artisans/me/marketplace-requests`; students use `GET /students/me/marketplace-requests` and `POST .../:id/respond`.
+
+Admins create paid contracts with `POST /admin/paid-contracts`. Contract parties read payment schedules at `GET /contracts/:id/payments`; artisans record external payments at `PATCH /payments/:id/external`, upload multipart field `proof` at `POST /payments/:id/proof`, and students confirm at `POST /payments/:id/confirm`. Proof download is authenticated at `GET /payments/:id/proof` and is never included in list responses.
+
+Participants use `POST /contracts/:id/disputes`, `/completion`, and `/reviews`. Admins use `GET /disputes`, `PATCH /admin/disputes/:id`, `PATCH /admin/completions/:id`, and `PATCH /admin/reviews/:id`.
+
 All domain routes are under `/api/v1`. Requests and responses use JSON. Authenticated requests send an Authorization Bearer token. No cookies or social/OTP login are used.
 
 Success: `{ success: true, message: string, data: ... }`. Errors: `{ success: false, message: string, error: { code, details? } }`. Validation details contain field paths and safe messages, never submitted values. UI translations use error codes. Password hashes and token versions are never returned.

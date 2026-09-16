@@ -16,6 +16,7 @@ import {
   users,
 } from '../schemas/index.js';
 import { AppError } from '../utils/app-error.js';
+import { activatePaidPayments } from './marketplace-service.js';
 import type {
   ContractInput,
   ContractUpdate,
@@ -469,10 +470,11 @@ export async function acceptAssignment(db: Database, userId: string, id: string)
       .set({ status: 'ACCEPTED', studentAcceptedAt: new Date(), updatedAt: new Date() })
       .where(eq(assignments.id, id))
       .returning();
-    await tx
-      .update(growthRequests)
-      .set({ status: 'DISCOVERY_IN_PROGRESS', updatedAt: new Date() })
-      .where(eq(growthRequests.id, assignment.growthRequestId));
+    if (assignment.growthRequestId)
+      await tx
+        .update(growthRequests)
+        .set({ status: 'DISCOVERY_IN_PROGRESS', updatedAt: new Date() })
+        .where(eq(growthRequests.id, assignment.growthRequestId));
     return updated;
   });
 }
@@ -572,13 +574,14 @@ export async function reviewDiscovery(
         updatedAt: new Date(),
       })
       .where(eq(assignments.id, assignmentId));
-    await tx
-      .update(growthRequests)
-      .set({
-        status: reviewed ? 'CONTRACT_PENDING' : 'DISCOVERY_IN_PROGRESS',
-        updatedAt: new Date(),
-      })
-      .where(eq(growthRequests.id, assignment.growthRequestId));
+    if (assignment.growthRequestId)
+      await tx
+        .update(growthRequests)
+        .set({
+          status: reviewed ? 'CONTRACT_PENDING' : 'DISCOVERY_IN_PROGRESS',
+          updatedAt: new Date(),
+        })
+        .where(eq(growthRequests.id, assignment.growthRequestId));
     return updated;
   });
 }
@@ -713,10 +716,12 @@ export async function acceptContract(
         .update(assignments)
         .set({ status: 'ACTIVE', updatedAt: now })
         .where(eq(assignments.id, assignment.id));
-      await tx
-        .update(growthRequests)
-        .set({ status: 'ACTIVE', updatedAt: now })
-        .where(eq(growthRequests.id, assignment.growthRequestId));
+      if (assignment.growthRequestId)
+        await tx
+          .update(growthRequests)
+          .set({ status: 'ACTIVE', updatedAt: now })
+          .where(eq(growthRequests.id, assignment.growthRequestId));
+      if (contract.contractType === 'PAID') await activatePaidPayments(tx, contract.id);
     }
     return updated;
   });
@@ -906,10 +911,12 @@ export async function addMetricForStudent(
 }
 export async function adminAssignmentProgress(db: Database, assignmentId: string) {
   const people = await assignmentWithPeople(db, assignmentId);
-  const [request] = await db
-    .select()
-    .from(growthRequests)
-    .where(eq(growthRequests.id, people.assignment.growthRequestId));
+  const [request] = people.assignment.growthRequestId
+    ? await db
+        .select()
+        .from(growthRequests)
+        .where(eq(growthRequests.id, people.assignment.growthRequestId))
+    : [];
   const [discovery, contract] = await Promise.all([
     db.select().from(discoveryReports).where(eq(discoveryReports.assignmentId, assignmentId)),
     db.select().from(contracts).where(eq(contracts.assignmentId, assignmentId)),

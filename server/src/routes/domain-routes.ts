@@ -22,6 +22,7 @@ import {
   rejectionSchema,
 } from '../validators/admin.js';
 import { trialRoutes } from './trial-routes.js';
+import { marketplaceRoutes } from './marketplace-routes.js';
 
 const empty = z.object({}).strict();
 const id = z.object({ id: z.uuid() }).strict();
@@ -119,5 +120,6 @@ export function domainRoutes(db: Database, config: Environment) {
     controller.assistanceUpdate,
   );
   router.use(trialRoutes(db, config));
+  router.use(marketplaceRoutes(db, config));
   return router;
 }

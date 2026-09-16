@@ -1,5 +1,13 @@
 # Phase 3 architecture
 
+## Phase 4 extension
+
+Paid work is separate from the free-trial flow. Marketplace cards are query-derived from active, verified student profiles and omit private contacts. A paid assignment is created only after the selected student accepts an interest request. Existing discovery and dual-acceptance contract mechanics are reused; paid activation creates a queryable external-payment schedule transactionally.
+
+Payment records are evidence and confirmation only: Bharat Bazaar never processes, holds, or moves money. Multipart JPEG/PNG/PDF proof is limited to 2 MB, buffered in memory and stored as private PostgreSQL bytea data for this MVP. Binary data is excluded from lists and is streamed only after participant/admin authorization with private, no-store response headers. Production-scale proof storage should move to private object storage.
+
+Contract completion, reviews and disputes remain server-authorized state machines. Completed contracts derive portfolio history and rating eligibility rather than duplicating project records. localStorage-backed Bearer tokens remain an MVP limitation and must be replaced before production.
+
 ## Request path
 
 Browser → Axios (Bearer token) → Express security/CORS/body limits → rate limit where applicable → authentication → role authorization → Zod envelope validation → controller → service → Drizzle → PostgreSQL.

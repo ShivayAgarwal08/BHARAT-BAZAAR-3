@@ -35,6 +35,7 @@ import {
   TasksPage,
   MetricsPage,
 } from '../pages/dashboard/TrialPages';
+import { MarketplacePage, StudentInterestPage } from '../pages/dashboard/MarketplacePages';
 
 export function AppRoutes() {
   return (
@@ -84,6 +85,7 @@ export function AppRoutes() {
                 <Route path="contract/:id" element={<ContractPage role="artisan" />} />
                 <Route path="contract/:id/tasks" element={<TasksPage role="artisan" />} />
                 <Route path="contract/:id/metrics" element={<MetricsPage role="artisan" />} />
+                <Route path="marketplace" element={<MarketplacePage />} />
               </>
             )}
             {role === 'student' && (
@@ -94,6 +96,7 @@ export function AppRoutes() {
                 <Route path="contract/:id" element={<ContractPage role="student" />} />
                 <Route path="contract/:id/tasks" element={<TasksPage role="student" />} />
                 <Route path="contract/:id/metrics" element={<MetricsPage role="student" />} />
+                <Route path="marketplace-requests" element={<StudentInterestPage />} />
               </>
             )}
             {dashboardSections[role]

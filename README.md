@@ -4,13 +4,13 @@ Artisans create. Students grow. We connect.
 
 Bharat Bazaar is a multilingual managed growth platform connecting local artisans with college Student Growth Managers. The platform stays involved in verification and, in later phases, matching, agreements and progress.
 
-## Current status: Phase 3
+## Current status: Phase 4
 
 Implemented: real accounts, Bearer JWT authentication, server-side role authorization, artisan and student onboarding, skill selection, assisted-registration requests, admin student verification, and real admin counts. Public Phase 1 pages and the warm cream / terracotta / indigo design system remain in place.
 
-Phase 3 adds a focused, platform-managed free-trial workflow: artisan growth requests, admin review and ranked verified-student suggestions, manual assignment, discovery reports, versioned zero-payment contracts, tasks, milestone progress and business metrics. Payments, marketplace bidding, chat, reviews and disputes remain out of scope.
+Phase 4 adds a verified-student marketplace, artisan interest requests, paid assignments/contracts, external-payment evidence, private proof storage, confirmation, completion, reviews and disputes. Bharat Bazaar never processes or holds money.
 
-See [Phase 3 report](docs/phase-3-report.md), [Phase 2 report](docs/phase-2-report.md), [API reference](docs/api.md), and [architecture](docs/architecture.md).
+See [Phase 4 report](docs/phase-4-report.md), [Phase 3 report](docs/phase-3-report.md), [API reference](docs/api.md), and [architecture](docs/architecture.md).
 
 ## Technology
 

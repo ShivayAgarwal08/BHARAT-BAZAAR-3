@@ -3,6 +3,7 @@ import {
   boolean,
   check,
   date,
+  customType,
   index,
   integer,
   numeric,
@@ -15,6 +16,8 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => 'bytea' });
 
 export const roleEnum = pgEnum('user_role', ['ARTISAN', 'STUDENT', 'ADMIN']);
 export const accountStatusEnum = pgEnum('account_status', [
@@ -86,6 +89,45 @@ export const taskStatusEnum = pgEnum('task_status', [
   'COMPLETED',
 ]);
 export const metricTypeEnum = pgEnum('business_metric_type', ['BASELINE', 'PROGRESS', 'FINAL']);
+export const marketplaceRequestStatusEnum = pgEnum('marketplace_request_status', [
+  'PENDING',
+  'ACCEPTED',
+  'DECLINED',
+  'CANCELLED',
+  'ASSIGNMENT_CREATED',
+]);
+export const paymentStatusEnum = pgEnum('payment_status', [
+  'DUE',
+  'PROOF_UPLOADED',
+  'RECEIVED',
+  'DISPUTED',
+  'VERIFIED',
+]);
+export const paymentMethodEnum = pgEnum('payment_method', [
+  'UPI',
+  'BANK_TRANSFER',
+  'CASH',
+  'OTHER',
+]);
+export const reviewRoleEnum = pgEnum('reviewer_role', ['ARTISAN', 'STUDENT']);
+export const disputeStatusEnum = pgEnum('dispute_status', [
+  'OPEN',
+  'UNDER_REVIEW',
+  'RESOLVED',
+  'REJECTED',
+]);
+export const disputeCategoryEnum = pgEnum('dispute_category', [
+  'PAYMENT',
+  'WORK_QUALITY',
+  'COMMUNICATION',
+  'CONTRACT',
+  'OTHER',
+]);
+export const completionStatusEnum = pgEnum('completion_status', [
+  'REQUESTED',
+  'APPROVED',
+  'REJECTED',
+]);
 const timestamps = () => ({
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true, precision: 3 }).notNull().defaultNow(),
@@ -147,6 +189,7 @@ export const artisanProfiles = pgTable(
     onlinePresence: text('online_presence'),
     businessProblems: text('business_problems'),
     onboardingCompleted: boolean('onboarding_completed').notNull().default(false),
+    marketplaceEligible: boolean('marketplace_eligible').notNull().default(false),
     ...timestamps(),
   },
   (table) => [
@@ -322,18 +365,21 @@ export const assignments = pgTable(
   'assignments',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    growthRequestId: uuid('growth_request_id')
-      .notNull()
-      .references(() => growthRequests.id, { onDelete: 'cascade' }),
+    growthRequestId: uuid('growth_request_id').references(() => growthRequests.id, {
+      onDelete: 'cascade',
+    }),
+    marketplaceRequestId: uuid('marketplace_request_id')
+      .unique()
+      .references(() => marketplaceRequests.id, { onDelete: 'set null' }),
     artisanProfileId: uuid('artisan_profile_id')
       .notNull()
       .references(() => artisanProfiles.id, { onDelete: 'restrict' }),
     studentProfileId: uuid('student_profile_id')
       .notNull()
       .references(() => studentProfiles.id, { onDelete: 'restrict' }),
-    assignedByAdminId: uuid('assigned_by_admin_id')
-      .notNull()
-      .references(() => users.id, { onDelete: 'restrict' }),
+    assignedByAdminId: uuid('assigned_by_admin_id').references(() => users.id, {
+      onDelete: 'restrict',
+    }),
     type: varchar('type', { length: 20 }).notNull().default('FREE_TRIAL'),
     status: assignmentStatusEnum('status').notNull().default('PROPOSED'),
     assignedAt: timestamp('assigned_at', { withTimezone: true }).notNull().defaultNow(),
@@ -341,7 +387,7 @@ export const assignments = pgTable(
     ...timestamps(),
   },
   (table) => [
-    check('assignment_type_free_trial', sql`${table.type} = 'FREE_TRIAL'`),
+    check('assignment_type_valid', sql`${table.type} in ('FREE_TRIAL', 'PAID')`),
     uniqueIndex('assignments_one_open_request_idx')
       .on(table.growthRequestId)
       .where(sql`${table.status} not in ('COMPLETED', 'CANCELLED')`),
@@ -403,6 +449,7 @@ export const contracts = pgTable(
       .default('0'),
     platformStudentStipend: numeric('platform_student_stipend', { precision: 12, scale: 2 }),
     currency: varchar('currency', { length: 3 }).notNull().default('INR'),
+    paymentSchedule: varchar('payment_schedule', { length: 24 }),
     version: integer('version').notNull().default(1),
     status: contractStatusEnum('status').notNull().default('DRAFT'),
     artisanAcceptedVersion: integer('artisan_accepted_version'),
@@ -416,8 +463,11 @@ export const contracts = pgTable(
     ...timestamps(),
   },
   (table) => [
-    check('contract_type_free_trial', sql`${table.contractType} = 'FREE_TRIAL'`),
-    check('contract_artisan_payment_zero', sql`${table.artisanPaymentAmount} = 0`),
+    check('contract_type_valid', sql`${table.contractType} in ('FREE_TRIAL', 'PAID')`),
+    check(
+      'contract_payment_by_type',
+      sql`(${table.contractType} = 'FREE_TRIAL' and ${table.artisanPaymentAmount} = 0) or (${table.contractType} = 'PAID' and ${table.artisanPaymentAmount} > 0)`,
+    ),
     check(
       'contract_stipend_nonnegative',
       sql`${table.platformStudentStipend} is null or ${table.platformStudentStipend} >= 0`,
@@ -524,4 +574,185 @@ export const businessMetrics = pgTable(
       .where(sql`${table.type} = 'FINAL'`),
     index('business_metrics_contract_date_idx').on(table.contractId, table.measurementDate),
   ],
+);
+
+export const marketplaceRequests = pgTable(
+  'marketplace_requests',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    artisanProfileId: uuid('artisan_profile_id')
+      .notNull()
+      .references(() => artisanProfiles.id, { onDelete: 'cascade' }),
+    studentProfileId: uuid('student_profile_id')
+      .notNull()
+      .references(() => studentProfiles.id, { onDelete: 'restrict' }),
+    message: text('message').notNull(),
+    requestedServices: text('requested_services').array().notNull(),
+    proposedDurationMonths: integer('proposed_duration_months').notNull(),
+    proposedMonthlyBudget: numeric('proposed_monthly_budget', { precision: 12, scale: 2 }),
+    status: marketplaceRequestStatusEnum('status').notNull().default('PENDING'),
+    studentResponse: text('student_response'),
+    respondedAt: timestamp('responded_at', { withTimezone: true }),
+    ...timestamps(),
+  },
+  (table) => [
+    check('marketplace_duration_range', sql`${table.proposedDurationMonths} between 1 and 12`),
+    check(
+      'marketplace_budget_nonnegative',
+      sql`${table.proposedMonthlyBudget} is null or ${table.proposedMonthlyBudget} >= 0`,
+    ),
+    uniqueIndex('marketplace_pending_pair_idx')
+      .on(table.artisanProfileId, table.studentProfileId)
+      .where(sql`${table.status} = 'PENDING'`),
+    index('marketplace_student_status_idx').on(
+      table.studentProfileId,
+      table.status,
+      table.createdAt,
+    ),
+  ],
+);
+
+export const paymentRecords = pgTable(
+  'payment_records',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contractId: uuid('contract_id')
+      .notNull()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    periodLabel: varchar('period_label', { length: 80 }).notNull(),
+    dueDate: date('due_date').notNull(),
+    amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
+    currency: varchar('currency', { length: 3 }).notNull().default('INR'),
+    paymentMethod: paymentMethodEnum('payment_method'),
+    transactionReference: varchar('transaction_reference', { length: 200 }),
+    artisanNotes: text('artisan_notes'),
+    status: paymentStatusEnum('status').notNull().default('DUE'),
+    paidAt: timestamp('paid_at', { withTimezone: true }),
+    studentConfirmedAt: timestamp('student_confirmed_at', { withTimezone: true }),
+    verifiedAt: timestamp('verified_at', { withTimezone: true }),
+    ...timestamps(),
+  },
+  (table) => [
+    check('payment_amount_positive', sql`${table.amount} > 0`),
+    uniqueIndex('payment_contract_period_idx').on(table.contractId, table.periodLabel),
+    index('payment_status_due_idx').on(table.status, table.dueDate),
+  ],
+);
+
+export const paymentProofs = pgTable(
+  'payment_proofs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    paymentRecordId: uuid('payment_record_id')
+      .notNull()
+      .unique()
+      .references(() => paymentRecords.id, { onDelete: 'cascade' }),
+    uploadedByUserId: uuid('uploaded_by_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    originalFileName: varchar('original_file_name', { length: 255 }).notNull(),
+    mimeType: varchar('mime_type', { length: 100 }).notNull(),
+    fileSize: integer('file_size').notNull(),
+    fileData: bytea('file_data').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    check('proof_size_range', sql`${table.fileSize} > 0 and ${table.fileSize} <= 2097152`),
+    check(
+      'proof_mime_type',
+      sql`${table.mimeType} in ('image/jpeg', 'image/png', 'application/pdf')`,
+    ),
+  ],
+);
+
+export const reviews = pgTable(
+  'reviews',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contractId: uuid('contract_id')
+      .notNull()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    reviewerUserId: uuid('reviewer_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    reviewedUserId: uuid('reviewed_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    reviewerRole: reviewRoleEnum('reviewer_role').notNull(),
+    overallRating: integer('overall_rating').notNull(),
+    communicationRating: integer('communication_rating').notNull(),
+    professionalismRating: integer('professionalism_rating').notNull(),
+    reliabilityRating: integer('reliability_rating').notNull(),
+    resultsRating: integer('results_rating'),
+    reviewText: text('review_text').notNull(),
+    hiddenByAdmin: boolean('hidden_by_admin').notNull().default(false),
+    hiddenReason: text('hidden_reason'),
+    ...timestamps(),
+  },
+  (table) => [
+    uniqueIndex('reviews_one_reviewer_contract_idx').on(table.contractId, table.reviewerUserId),
+    check('review_not_self', sql`${table.reviewerUserId} <> ${table.reviewedUserId}`),
+    check('review_overall_range', sql`${table.overallRating} between 1 and 5`),
+    check('review_communication_range', sql`${table.communicationRating} between 1 and 5`),
+    check('review_professionalism_range', sql`${table.professionalismRating} between 1 and 5`),
+    check('review_reliability_range', sql`${table.reliabilityRating} between 1 and 5`),
+    check(
+      'review_results_range',
+      sql`${table.resultsRating} is null or ${table.resultsRating} between 1 and 5`,
+    ),
+    index('reviews_reviewed_visible_idx').on(table.reviewedUserId, table.hiddenByAdmin),
+  ],
+);
+
+export const disputes = pgTable(
+  'disputes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contractId: uuid('contract_id')
+      .notNull()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    paymentRecordId: uuid('payment_record_id').references(() => paymentRecords.id, {
+      onDelete: 'set null',
+    }),
+    openedByUserId: uuid('opened_by_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    category: disputeCategoryEnum('category').notNull(),
+    title: varchar('title', { length: 160 }).notNull(),
+    description: text('description').notNull(),
+    status: disputeStatusEnum('status').notNull().default('OPEN'),
+    adminNotes: text('admin_notes'),
+    resolution: text('resolution'),
+    resolvedByAdminId: uuid('resolved_by_admin_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    resolvedAt: timestamp('resolved_at', { withTimezone: true }),
+    ...timestamps(),
+  },
+  (table) => [
+    index('disputes_status_created_idx').on(table.status, table.createdAt),
+    index('disputes_contract_idx').on(table.contractId),
+  ],
+);
+
+export const contractCompletionRecords = pgTable(
+  'contract_completion_records',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    contractId: uuid('contract_id')
+      .notNull()
+      .unique()
+      .references(() => contracts.id, { onDelete: 'cascade' }),
+    requestedByUserId: uuid('requested_by_user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'restrict' }),
+    completionSummary: text('completion_summary').notNull(),
+    finalMetricsConfirmed: boolean('final_metrics_confirmed').notNull(),
+    status: completionStatusEnum('status').notNull().default('REQUESTED'),
+    adminId: uuid('admin_id').references(() => users.id, { onDelete: 'set null' }),
+    adminNotes: text('admin_notes'),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    ...timestamps(),
+  },
+  (table) => [index('completion_status_created_idx').on(table.status, table.createdAt)],
 );
