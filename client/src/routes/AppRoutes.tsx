@@ -22,6 +22,19 @@ import {
   AdminAssistancePage,
   AdminUsersPage,
 } from '../pages/dashboard/AdminPages';
+import {
+  AdminAssignmentPage,
+  AdminGrowthRequestDetailPage,
+  AdminGrowthRequestsPage,
+  ArtisanGrowthRequestsPage,
+  ArtisanRequestDetailPage,
+  ArtisanRequestFormPage,
+  ContractPage,
+  DiscoveryPage,
+  StudentAssignmentsPage,
+  TasksPage,
+  MetricsPage,
+} from '../pages/dashboard/TrialPages';
 
 export function AppRoutes() {
   return (
@@ -58,6 +71,29 @@ export function AppRoutes() {
                 <Route path="assisted-registrations" element={<AdminAssistancePage />} />
                 <Route path="artisans" element={<AdminUsersPage artisansOnly />} />
                 <Route path="users" element={<AdminUsersPage />} />
+                <Route path="growth-requests" element={<AdminGrowthRequestsPage />} />
+                <Route path="growth-requests/:id" element={<AdminGrowthRequestDetailPage />} />
+                <Route path="assignments/:id" element={<AdminAssignmentPage />} />
+              </>
+            )}
+            {role === 'artisan' && (
+              <>
+                <Route path="growth-requests" element={<ArtisanGrowthRequestsPage />} />
+                <Route path="growth-requests/new" element={<ArtisanRequestFormPage />} />
+                <Route path="growth-requests/:id" element={<ArtisanRequestDetailPage />} />
+                <Route path="contract/:id" element={<ContractPage role="artisan" />} />
+                <Route path="contract/:id/tasks" element={<TasksPage role="artisan" />} />
+                <Route path="contract/:id/metrics" element={<MetricsPage role="artisan" />} />
+              </>
+            )}
+            {role === 'student' && (
+              <>
+                <Route path="current-artisan" element={<StudentAssignmentsPage />} />
+                <Route path="assignment/:id" element={<DiscoveryPage />} />
+                <Route path="assignment/:id/discovery" element={<DiscoveryPage />} />
+                <Route path="contract/:id" element={<ContractPage role="student" />} />
+                <Route path="contract/:id/tasks" element={<TasksPage role="student" />} />
+                <Route path="contract/:id/metrics" element={<MetricsPage role="student" />} />
               </>
             )}
             {dashboardSections[role]
@@ -67,7 +103,9 @@ export function AppRoutes() {
                   section.slug !== 'profile' &&
                   !(
                     role === 'admin' &&
-                    ['students', 'artisans', 'assisted-registrations'].includes(section.slug)
+                    ['students', 'artisans', 'assisted-registrations', 'growth-requests'].includes(
+                      section.slug,
+                    )
                   ),
               )
               .map((section) => (

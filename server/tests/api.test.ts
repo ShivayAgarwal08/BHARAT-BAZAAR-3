@@ -20,9 +20,9 @@ for (const path of ['/api/health', '/api/v1/health']) {
   });
 }
 
-test('v1 root reports Phase 2 and rejects unexpected query parameters', async () => {
+test('v1 root reports Phase 3 and rejects unexpected query parameters', async () => {
   const response = await request(app).get('/api/v1').expect(200);
-  assert.equal(response.body.data.phase, 2);
+  assert.equal(response.body.data.phase, 3);
   const invalid = await request(app).get('/api/v1?unknown=true').expect(400);
   assert.equal(invalid.body.error.code, 'VALIDATION_ERROR');
 });

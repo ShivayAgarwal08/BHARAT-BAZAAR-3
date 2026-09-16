@@ -102,3 +102,88 @@ export interface AdminCounts {
   pendingStudentVerifications: number;
   pendingAssistedRegistrations: number;
 }
+export type GrowthRequestStatus =
+  | 'DRAFT'
+  | 'SUBMITTED'
+  | 'UNDER_REVIEW'
+  | 'STUDENT_ASSIGNED'
+  | 'DISCOVERY_IN_PROGRESS'
+  | 'CONTRACT_PENDING'
+  | 'ACTIVE'
+  | 'COMPLETED'
+  | 'CANCELLED';
+export interface GrowthRequest {
+  id: string;
+  title: string;
+  problemDescription: string;
+  preferredLanguage: 'EN' | 'HI';
+  preferredDurationMonths: number;
+  status: GrowthRequestStatus;
+  submittedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface GrowthRequestDetail {
+  request: GrowthRequest;
+  skills: Skill[];
+  assignment: Assignment | null;
+  discovery: DiscoveryReport | null;
+  contract: TrialContract | null;
+}
+export interface Assignment {
+  id: string;
+  growthRequestId: string;
+  artisanProfileId: string;
+  studentProfileId: string;
+  status: string;
+  assignedAt: string;
+  studentAcceptedAt: string | null;
+}
+export interface DiscoveryReport {
+  id: string;
+  assignmentId: string;
+  status: string;
+  businessSummary: string;
+  identifiedProblems: string;
+  recommendedServices: string;
+  proposedDeliverables: string;
+  proposedDurationMonths: number;
+  knownConstraints: string;
+  successMeasurementPlan: string;
+  additionalNotes: string | null;
+  adminFeedback: string | null;
+}
+export interface TrialContract {
+  id: string;
+  assignmentId: string;
+  title: string;
+  status: string;
+  version: number;
+  problemStatement: string;
+  responsibilities: string;
+  deliverables: string;
+  growthTargets: string;
+  exclusions: string;
+  startDate: string;
+  endDate: string;
+  artisanAcceptedVersion: number | null;
+  studentAcceptedVersion: number | null;
+}
+export interface TrialTask {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string;
+  status: string;
+  submissionNotes: string | null;
+  artisanFeedback: string | null;
+}
+export interface TrialMilestone {
+  id: string;
+  title: string;
+  description: string;
+  sequence: number;
+  dueDate: string;
+  status: string;
+  tasks: TrialTask[];
+}

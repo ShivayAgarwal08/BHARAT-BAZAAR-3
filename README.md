@@ -4,13 +4,13 @@ Artisans create. Students grow. We connect.
 
 Bharat Bazaar is a multilingual managed growth platform connecting local artisans with college Student Growth Managers. The platform stays involved in verification and, in later phases, matching, agreements and progress.
 
-## Current status: Phase 2
+## Current status: Phase 3
 
 Implemented: real accounts, Bearer JWT authentication, server-side role authorization, artisan and student onboarding, skill selection, assisted-registration requests, admin student verification, and real admin counts. Public Phase 1 pages and the warm cream / terracotta / indigo design system remain in place.
 
-Growth requests, discovery/matching, contracts, milestones, payments, reviews and disputes remain clearly labelled placeholders. No payment gateway, social login, OTP, deployment or automatic Git commit is included.
+Phase 3 adds a focused, platform-managed free-trial workflow: artisan growth requests, admin review and ranked verified-student suggestions, manual assignment, discovery reports, versioned zero-payment contracts, tasks, milestone progress and business metrics. Payments, marketplace bidding, chat, reviews and disputes remain out of scope.
 
-See [Phase 2 report](docs/phase-2-report.md), [API reference](docs/api.md), [architecture](docs/architecture.md), and the historical [Phase 1 report](docs/phase-1-report.md).
+See [Phase 3 report](docs/phase-3-report.md), [Phase 2 report](docs/phase-2-report.md), [API reference](docs/api.md), and [architecture](docs/architecture.md).
 
 ## Technology
 
@@ -164,8 +164,8 @@ Chrome is the default Playwright channel. Set `PLAYWRIGHT_CHANNEL=msedge` to use
 
 ## Next phases and eventual deployment
 
-Phase 3 should define the growth-request lifecycle, eligibility rules, request ownership and admin handling before implementing matching. Require appropriate account/profile verification on future workflow endpoints. Do not infer permission to start that work from Phase 2.
+Phase 3 now provides the managed free-trial lifecycle: growth-request ownership, verified-student ranking, admin assignment, discovery review, versioned free-trial contracts, task review and business metrics. Future matching must preserve the same explicit role and profile-verification checks.
 
-Later phases can add managed matching, contracts, milestones, progress reports, external-payment records, reviews and disputes. Before production: hardened sessions, password recovery, contact verification, abuse controls, operational monitoring, privacy/retention policies and broader accessibility/security review.
+Later phases can add broader managed matching, external-payment records, reviews and disputes. Before production: hardened sessions, password recovery, contact verification, abuse controls, operational monitoring, privacy/retention policies and broader accessibility/security review.
 
 Intended deployment targets are **Neon** (PostgreSQL), **Render** (Express API), and **Vercel** (Vite frontend). Configure environment variables, exact CORS origin, client SPA rewrites and trusted proxies when deployment is explicitly requested. Nothing has been deployed in this phase.

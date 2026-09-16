@@ -1,4 +1,4 @@
-# Phase 2 API reference
+# Phase 3 API reference
 
 All domain routes are under `/api/v1`. Requests and responses use JSON. Authenticated requests send an Authorization Bearer token. No cookies or social/OTP login are used.
 
@@ -30,7 +30,7 @@ Success: `{ success: true, message: string, data: ... }`. Errors: `{ success: fa
 | PATCH  | /admin/assisted-registrations/:id | ADMIN                | status, expectedUpdatedAt → request assigned to current admin                                   |
 | GET    | /health                           | Public               | Liveness only, no database query                                                                |
 
-Also `GET /api/health` returns `{ "success": true, "message": "Bharat Bazaar API is running" }`. `GET /api/v1` reports phase 2.
+Also `GET /api/health` returns `{ "success": true, "message": "Bharat Bazaar API is running" }`. `GET /api/v1` reports phase 3.
 
 Pagination: `page` defaults to 1; `limit` defaults to 20 (maximum 100). Responses contain `items, total, page, limit`. Filters are uppercase enums and unknown fields are rejected.
 
@@ -62,4 +62,21 @@ Typical status codes: 201 creation; 200 success; 400 validation; 401 authenticat
 
 Common codes: VALIDATION_ERROR, INVALID_CREDENTIALS, UNAUTHENTICATED, FORBIDDEN, CONTACT_EXISTS, STALE_RECORD, INVALID_SKILLS, SKILLS_REQUIRED, ONBOARDING_REQUIRED, ACCOUNT_SUSPENDED, NOT_FOUND, RATE_LIMITED.
 
-No growth-request, matching, contract, milestone, payment, review or dispute endpoints exist.
+## Phase 3 free-trial endpoints
+
+| Method       | Path (after `/api/v1`)                                                        | Access           | Purpose                                 |
+| ------------ | ----------------------------------------------------------------------------- | ---------------- | --------------------------------------- |
+| GET/POST     | `/artisans/me/growth-requests`                                                | ARTISAN          | List/create owned requests              |
+| GET/PUT      | `/artisans/me/growth-requests/:id`                                            | ARTISAN owner    | View/edit a draft                       |
+| POST         | `/artisans/me/growth-requests/:id/submit`                                     | ARTISAN owner    | Submit request                          |
+| GET/POST     | `/students/me/assignments`, `/:id/accept`                                     | STUDENT owner    | View/accept an assignment               |
+| GET/PUT/POST | `/students/me/assignments/:id/discovery`, `/submit`                           | STUDENT owner    | Read, save or submit discovery          |
+| GET/POST     | role-owned `/contracts/:id`, `/:id/accept`                                    | Contract party   | Read and accept current version         |
+| GET/POST     | role-owned `/contracts/:id/tasks`, `/:id/metrics`                             | Contract party   | Read tasks; read/write metrics          |
+| PATCH        | `/students/me/tasks/:id`                                                      | Assigned STUDENT | Update/submit task                      |
+| PATCH        | `/artisans/me/tasks/:id/review`                                               | Assigned ARTISAN | Approve/request revision                |
+| GET/PATCH    | `/admin/growth-requests`, `/:id/review`                                       | ADMIN            | Queue and review requests               |
+| GET/POST     | `/admin/growth-requests/:id/candidates`, `/:id/assign`                        | ADMIN            | Ranked candidates and manual assignment |
+| PATCH/GET    | `/admin/assignments/:id/discovery`, `/admin/assignments/:id`                  | ADMIN            | Review discovery and view progress      |
+| POST/PUT     | `/admin/contracts`, `/admin/contracts/:id`                                    | ADMIN            | Create/edit contracts                   |
+| POST         | `/admin/contracts/:id/send`, `/:id/milestones`, `/admin/milestones/:id/tasks` | ADMIN            | Send plan and create work items         |

@@ -4,6 +4,8 @@ import en from './locales/en.json';
 import hi from './locales/hi.json';
 import enPhase2 from './locales/en-phase2.json';
 import hiPhase2 from './locales/hi-phase2.json';
+import enPhase3 from './locales/en-phase3.json';
+import hiPhase3 from './locales/hi-phase3.json';
 
 function preferredLanguage() {
   try {
@@ -15,8 +17,8 @@ function preferredLanguage() {
 
 void i18n.use(initReactI18next).init({
   resources: {
-    en: { translation: { ...en, p2: enPhase2 } },
-    hi: { translation: { ...hi, p2: hiPhase2 } },
+    en: { translation: { ...en, p2: enPhase2, p3: enPhase3 } },
+    hi: { translation: { ...hi, p2: hiPhase2, p3: hiPhase3 } },
   },
   lng: preferredLanguage(),
   fallbackLng: 'en',

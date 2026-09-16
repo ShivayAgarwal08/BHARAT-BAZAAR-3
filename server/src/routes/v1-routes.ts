@@ -7,8 +7,8 @@ export const v1Routes = Router();
 v1Routes.get('/', validateRequest(emptyRequestSchema), (_request, response) => {
   response.json({
     success: true,
-    message: 'Bharat Bazaar API v1 — Phase 2',
-    data: { phase: 2 },
+    message: 'Bharat Bazaar API v1 — Phase 3',
+    data: { phase: 3 },
   });
 });
 v1Routes.use('/health', healthRoutes);

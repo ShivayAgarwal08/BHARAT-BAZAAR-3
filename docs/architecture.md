@@ -1,4 +1,4 @@
-# Phase 2 architecture
+# Phase 3 architecture
 
 ## Request path
 
@@ -14,6 +14,11 @@ Routes define permissions and validation. Controllers handle HTTP envelopes. Ser
 - skills: unique slug and active flag; seed never duplicates or overwrites existing skills.
 - student_skills: composite primary key (profile, skill), proficiency; indexed by skill.
 - assisted_registration_requests: contact/call details, status and optional assigned admin.
+- growth_requests and growth_request_skills: artisan-owned draft/submission and selected service requirements.
+- assignments: an admin-created FREE_TRIAL relationship with one active assignment per request.
+- discovery_reports: one student-authored report per assignment with an admin review state.
+- contracts: one FREE_TRIAL, zero-artisan-payment contract per assignment with versioned acceptances.
+- milestones, tasks and business_metrics: administered work plans, member review states and measured results.
 
 Deleting a user cascades to its profile and student skill links. A deleted admin is unassigned from assistance requests, which remain. Referenced skills use RESTRICT deletion; prefer deactivation. There are **no deletion API endpoints** in Phase 2.
 
@@ -26,6 +31,8 @@ Registration creates user/profile in one transaction. Database uniqueness wins r
 Draft fields are nullable until completion. Completion validates merged profile fields; database checks provide another guard for essential fields. Status changes and skill replacements cannot target a caller-supplied user ID.
 
 Assistance submission returns only the new request ID/status. Contact details are behind ADMIN routes. A status change assigns the request to the authenticated admin but does not make a phone call or create an account.
+
+The free-trial service uses transactions whenever request, assignment, discovery, contract or milestone state must change together. Assignment creation locks the growth request and is backed by a partial unique index. Contract activation requires both stored acceptance versions to equal the current version, then activates its assignment and request atomically. Every member action repeats ownership checks inside the service layer.
 
 ## Frontend
 

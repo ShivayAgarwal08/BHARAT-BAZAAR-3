@@ -21,6 +21,7 @@ import {
   reviewSchema,
   rejectionSchema,
 } from '../validators/admin.js';
+import { trialRoutes } from './trial-routes.js';
 
 const empty = z.object({}).strict();
 const id = z.object({ id: z.uuid() }).strict();
@@ -117,5 +118,6 @@ export function domainRoutes(db: Database, config: Environment) {
     envelope(statusUpdate, undefined, id),
     controller.assistanceUpdate,
   );
+  router.use(trialRoutes(db, config));
   return router;
 }
