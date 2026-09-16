@@ -2,6 +2,7 @@ services:
   - type: web
     name: bharat-bazaar-api
     runtime: node
+    plan: free
     rootDir: .
     buildCommand: npm ci && npm run build
     startCommand: npm run start
