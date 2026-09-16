@@ -8,8 +8,10 @@ import { healthRoutes } from './routes/health-routes.js';
 import { v1Routes } from './routes/v1-routes.js';
 import { notFound } from './middleware/not-found.js';
 import { errorHandler } from './middleware/error-handler.js';
+import type { Database } from './db/index.js';
+import { domainRoutes } from './routes/domain-routes.js';
 
-export function createApp(config: Environment) {
+export function createApp(config: Environment, db?: Database) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -19,6 +21,7 @@ export function createApp(config: Environment) {
   app.use(express.json({ limit: '100kb' }));
   app.use('/api/health', healthRoutes);
   app.use('/api/v1', v1Routes);
+  if (db) app.use('/api/v1', domainRoutes(db, config));
   app.use(notFound);
   app.use(errorHandler);
   return app;

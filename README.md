@@ -1,204 +1,171 @@
 # Bharat Bazaar
 
-**Artisans create. Students grow. We connect.**
+Artisans create. Students grow. We connect.
 
-Bharat Bazaar is a multilingual managed growth platform connecting local artisans with college students. Artisans make products; Student Growth Managers support social media, product catalogues, online listings, customer communication, logistics and business records. The platform is designed to stay involved through verification, matching, discovery, agreements, progress, external-payment records, reviews and disputes.
+Bharat Bazaar is a multilingual managed growth platform connecting local artisans with college Student Growth Managers. The platform stays involved in verification and, in later phases, matching, agreements and progress.
 
-This repository contains **Phase 1 only**: the technical foundation, responsive public experience, English/Hindi translations, and three dashboard shells. Real authentication, database operations and business workflows are intentionally absent.
+## Current status: Phase 2
 
-## Technology stack
+Implemented: real accounts, Bearer JWT authentication, server-side role authorization, artisan and student onboarding, skill selection, assisted-registration requests, admin student verification, and real admin counts. Public Phase 1 pages and the warm cream / terracotta / indigo design system remain in place.
 
-- Client: React 19, Vite 7, TypeScript 5, Tailwind CSS 4, React Router 7, Lucide React, Axios, i18next and react-i18next.
-- Server: Node.js, Express 5, TypeScript, Drizzle ORM with the `pg` PostgreSQL driver, Zod 4, CORS, Helmet, Morgan and dotenv.
-- Repository: npm workspaces with one root lockfile; ESLint 10, typescript-eslint, React lint plugins, Prettier, concurrently, Node test runner, Supertest, Playwright and axe-core.
-- Future hosting: Neon PostgreSQL for data, Render for Express, and Vercel for the React SPA. Nothing is connected or deployed.
+Growth requests, discovery/matching, contracts, milestones, payments, reviews and disputes remain clearly labelled placeholders. No payment gateway, social login, OTP, deployment or automatic Git commit is included.
 
-Use Node.js **24 LTS** (verified on 24.13.0) and npm **11** (verified on 11.6.2). Use npm only.
+See [Phase 2 report](docs/phase-2-report.md), [API reference](docs/api.md), [architecture](docs/architecture.md), and the historical [Phase 1 report](docs/phase-1-report.md).
+
+## Technology
+
+- Client: React 19, Vite 7, TypeScript, Tailwind CSS 4, React Router, Lucide React, Axios, react-i18next (English / Hindi).
+- Server: Node.js 24+, Express 5, TypeScript, PostgreSQL on Neon, Drizzle ORM, node-postgres, Zod, bcrypt, jsonwebtoken, express-rate-limit, CORS, Helmet, Morgan and dotenv.
+- Tooling: npm workspaces, ESLint, Prettier, Node test runner, Supertest, Playwright and axe-core.
+- Keep npm; do not use pnpm or Yarn. No Next.js, Prisma, MongoDB, Firebase, Supabase or Redux.
 
 ## Local setup
 
-From the repository root:
+Requirements: Node.js 24+ and npm 10+, a Neon database, and a Chromium-based browser for optional browser tests.
+
+1. Run `npm install` at the repository root.
+2. Configure the server environment using the root `.env.example` as a reference. Put your own values in an ignored root `.env`, or in `server/.env`. Do not overwrite an existing environment file.
+3. Supply a strong random `JWT_SECRET` of at least 32 characters, plus the two database URLs. Never use an example or hardcoded password/secret.
+4. Run `npm run db:check`.
+5. For the checked-in migration, run `npm run db:migrate`, then `npm run db:seed`. Do not generate a new migration merely to set up an existing checkout.
+6. Run `npm run dev`.
+7. Open **http://localhost:5173**. API liveness: **http://localhost:5000/api/health**.
+
+To run each application separately:
 
 ```sh
-npm ci
-npm run dev
-```
-
-`npm ci` installs the versions in `package-lock.json`. For intentional dependency changes, use `npm install` and review the lockfile.
-
-- Frontend: <http://localhost:5173>
-- Backend health: <http://localhost:5000/api/health>
-- Versioned API: <http://localhost:5000/api/v1>
-
-The dev command starts both workspaces and stops the other if one exits. Use Ctrl+C to stop them. You can also use separate terminals:
-
-```sh
-npm run dev:client
 npm run dev:server
+npm run dev:client
 ```
 
-Ports 5173 and 5000 must be available. Vite uses a strict port; it does not silently switch to a different one. The dev server binds to the local loopback interface. Open the frontend using `localhost` so its origin matches the default CORS configuration.
+Keep these in separate terminals. Ctrl+C stops them. For a built server use `npm run build`, then `npm start`. `npm run preview` serves the built frontend on port 4173; set `CLIENT_URL=http://localhost:4173` for API access during a preview session.
 
-## Environment setup
+### Environment
 
-**No `.env` or credentials are needed for Phase 1.** Safe local defaults let both applications start with the example files untouched. Only example files are included.
+Precedence for server settings: existing process variables, then `server/.env`, then root `.env`. Paths work from source and compiled server code. No real credentials belong in Git, documentation, screenshots or logs.
 
-When you need custom local configuration, create `server/.env` from `server/.env.example` and `client/.env` from `client/.env.example`. These real environment files are ignored by Git. The root `.env.example` is a reference; the applications do not load a root `.env`.
+| Variable                        | Purpose                                                                           |
+| ------------------------------- | --------------------------------------------------------------------------------- |
+| `PORT`                          | API port, default 5000                                                            |
+| `NODE_ENV`                      | development, test or production                                                   |
+| `CLIENT_URL`                    | Exact permitted browser origin; default http://localhost:5173, no trailing slash  |
+| `DATABASE_URL`                  | Pooled Neon connection for runtime queries and seeding                            |
+| `DATABASE_URL_UNPOOLED`         | Direct Neon connection for migrations                                             |
+| `JWT_SECRET`                    | Required for real authentication; strong random value, at least 32 characters     |
+| `JWT_EXPIRES_IN`                | Access-token lifetime, default 7d                                                 |
+| `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Optional, both needed to seed the first admin                                     |
+| `VITE_API_BASE_URL`             | Client-only public setting in `client/.env`; default http://localhost:5000/api/v1 |
 
-| Variable                | Purpose / Phase 1 default                                                                               |
-| ----------------------- | ------------------------------------------------------------------------------------------------------- |
-| `PORT`                  | API port; `5000`                                                                                        |
-| `NODE_ENV`              | `development`, `test` or `production`; `development`                                                    |
-| `CLIENT_URL`            | One exact allowed frontend origin; `http://localhost:5173`, with no trailing slash or path              |
-| `DATABASE_URL`          | Blank in Phase 1; pooled PostgreSQL URL for future application queries                                  |
-| `DATABASE_URL_UNPOOLED` | Blank in Phase 1; direct PostgreSQL URL for future migrations                                           |
-| `JWT_SECRET`            | Blank in Phase 1; future authentication will need a randomly generated secret of at least 32 characters |
-| `JWT_EXPIRES_IN`        | Future token lifetime; `7d`; currently unused                                                           |
-| `VITE_API_BASE_URL`     | Public client configuration; `http://localhost:5000/api/v1`                                             |
+The frontend does **not** load root/server environment files. Use `client/.env.example` only when overriding the client API URL. Never put secrets in any `VITE_` variable. Restart servers after changing environment settings.
 
-Zod rejects malformed supplied values and reports variable names without echoing credentials. Blank database/JWT values are accepted in this phase. Never put a secret in a `VITE_` variable: Vite exposes these values in browser bundles. Restart the appropriate dev server after changing its environment. Production client environment values are captured at build time.
+The pooled/direct separation follows [Neon’s connection guidance](https://neon.com/docs/connect/connection-pooling). Database connections retain certificate verification; SSL modes that currently alias verify-full are explicitly normalized to verify-full. TLS is never disabled.
 
-## Available scripts
+### Admin setup
 
-Run these from the repository root:
+There is no public admin registration or demo admin login. Set your own `ADMIN_EMAIL` and `ADMIN_PASSWORD` in the ignored server environment and run `npm run db:seed`. Passwords require at least 10 characters, a letter and a number, and at most 72 UTF-8 bytes.
 
-| Script                 | Action                                                        |
-| ---------------------- | ------------------------------------------------------------- |
-| `npm run dev`          | Start frontend and backend together                           |
-| `npm run dev:client`   | Start Vite only                                               |
-| `npm run dev:server`   | Start Express with TypeScript watch/reload                    |
-| `npm run typecheck`    | Check client source/config and server source/config/tests     |
-| `npm run lint`         | Lint application, configuration and tests; fail on warnings   |
-| `npm run format`       | Format source and documentation with Prettier                 |
-| `npm run format:check` | Check formatting without changing files                       |
-| `npm run build`        | Build client into `client/dist` and server into `server/dist` |
-| `npm run preview`      | Serve the built client locally on port 4173                   |
-| `npm start`            | Run the built server; build first                             |
-| `npm test`             | Run backend configuration, validation and HTTP tests          |
-| `npm run test:e2e`     | Run browser checks at phone, tablet and desktop sizes         |
-| `npm run validate`     | Typecheck, lint, backend tests and both production builds     |
-| `npm run db:generate`  | Guarded Drizzle migration generation; reserved for Phase 2    |
-| `npm run db:migrate`   | Guarded Drizzle migration application; reserved for Phase 2   |
+The seed adds missing skills by slug and never duplicates them. It creates an admin only if both settings exist and no admin exists. An existing matching admin is left unchanged, including its password. An email collision with a non-admin causes a safe failure, never a role promotion. Remove the admin seed password from the environment after provisioning if no longer needed. There is no password reset workflow in this phase.
 
-For a single workspace, use `npm run typecheck --workspace client`, `npm run typecheck --workspace server`, `npm run build --workspace client`, or `npm run build --workspace server`.
+## Scripts
 
-The browser suite uses an installed Google Chrome by default and starts Vite if necessary. It does not need an API or database. On Windows, use `$env:PLAYWRIGHT_CHANNEL='msedge'` to select an installed Edge. For Playwright's bundled Chromium, install it explicitly with `npx playwright install chromium` and set `PLAYWRIGHT_CHANNEL` to an empty string. No browser binary was installed as part of Phase 1. Test screenshots/traces and the HTML report are ignored by Git.
+| Command                                    | Action                                                   |
+| ------------------------------------------ | -------------------------------------------------------- |
+| `npm run dev`                              | Run frontend and API together                            |
+| `npm run dev:client`, `npm run dev:server` | Run one development server                               |
+| `npm run typecheck`                        | Check client, server and server tool/test TypeScript     |
+| `npm run lint`                             | ESLint with zero warnings allowed                        |
+| `npm run format`, `npm run format:check`   | Format / check formatting                                |
+| `npm test`                                 | Unit and real PostgreSQL integration tests               |
+| `npm run test:e2e`                         | Chrome browser tests with isolated local test servers    |
+| `npm run build`                            | Build client and server                                  |
+| `npm start`                                | Run compiled server                                      |
+| `npm run preview`                          | Preview compiled client                                  |
+| `npm run db:check`                         | Safely check pooled and direct connectivity              |
+| `npm run db:generate`                      | Generate SQL from schema changes; review before applying |
+| `npm run db:migrate`                       | Apply checked-in SQL using the direct URL                |
+| `npm run db:seed`                          | Idempotent skills / optional first-admin seed            |
+| `npm run validate`                         | Typecheck, lint, backend tests and production builds     |
+
+Formatting and browser tests are separate from `validate`. No script deploys or commits. Migration and seed failures suppress driver details to avoid leaking credentials; investigate locally using sanitized diagnostics, not by printing connection strings.
+
+## Authentication and authorization
+
+- Artisan registration requires a phone; email is optional. Student registration requires an email; phone is optional. Indian 10-digit phones normalize to +91, and international numbers require a country prefix.
+- Email is trimmed and lowercased. Database unique constraints enforce both email and phone uniqueness, including concurrent registrations.
+- Passwords use bcrypt cost 12. JWTs use HS256 with issuer, audience, expiry and subject validation.
+- Axios consistently sends `Authorization: Bearer <token>`. On reload the client restores the session through `/auth/me`; the server rechecks the database role, account status and token version.
+- **localStorage token storage is an MVP decision, not a production-hardened session strategy.** Replace it with a hardened session design before production use, addressing XSS, session rotation, expiry, revocation and CSRF as appropriate.
+- Logout increments the account token version, revoking **all current sessions** for that account. If the logout request fails, the UI reports failure; it does not falsely claim server revocation.
+- A rejected student can sign in to correct and resubmit a profile. Suspended accounts cannot authenticate. Profile or skill edits reset student verification to pending.
+- Admin verification is not email/phone verification. Those flags remain false; this phase implements neither OTP nor email delivery.
+- Profile endpoints use the authenticated user ID; they never accept a target user ID. Admin-only endpoints enforce backend roles, independently of frontend guards.
+- Auth and public assistance submissions share an in-memory per-IP limit of 30 attempts per 15 minutes. Before multi-instance production use, use a shared limiter store and configure only trusted reverse proxies. Test fixtures disable this limiter explicitly.
+- No frontend mock-session mechanism remains.
+
+## Routes and onboarding
+
+Public: `/`, `/about`, `/artisans`, `/students`, `/login`, `/register`, `/register/artisan`, `/register/student`, `/help-register`, `/unauthorized`, and 404.
+
+Each member goes to `/onboarding/artisan` or `/onboarding/student` after registration. Two steps save progress; completion is validated server-side. Member dashboards are at `/dashboard/artisan` and `/dashboard/student`, with editable profiles at `profile`. The admin dashboard includes live `students`, `students/:id`, `assisted-registrations`, `artisans` and `users` pages.
+
+Languages are PostgreSQL text arrays. Profile completion uses required-field checks; optional fields remain nullable. Money estimates are fixed-precision PostgreSQL decimals and are returned as strings. These are business estimates, not payment transactions.
 
 ## Folder structure
 
 ```text
 /
-├── client/
-│   ├── public/                  # Local favicon
-│   ├── src/
-│   │   ├── assets/             # Original local craft illustration
-│   │   ├── components/         # Buttons, inputs, cards, layout helpers and states
-│   │   ├── context/            # Explicitly temporary demo session
-│   │   ├── hooks/              # Auth and page-title hooks
-│   │   ├── i18n/locales/       # English and Hindi dictionaries
-│   │   ├── layouts/            # Public and role dashboard layouts
-│   │   ├── pages/dashboard/    # Overviews, feature placeholders and dashboard 404
-│   │   ├── routes/             # Routes, role guards, navigation configuration
-│   │   ├── services/           # Configured Axios client
-│   │   ├── types/              # Frontend-only types
-│   │   ├── App.tsx
-│   │   ├── main.tsx
-│   │   └── styles.css          # Tailwind entry and shared design tokens/styles
-│   └── package.json
-├── server/
-│   ├── src/
-│   │   ├── config/             # Zod environment validation and CORS
-│   │   ├── controllers/        # Thin HTTP handlers
-│   │   ├── db/                 # Deferred Drizzle/pg connection factory
-│   │   ├── middleware/         # Request validation, JSON errors and 404
-│   │   ├── routes/             # Health and v1 routers
-│   │   ├── schemas/            # Reserved for Drizzle tables in Phase 2
-│   │   ├── services/           # Service foundation, health response
-│   │   ├── types/              # API response contracts
-│   │   ├── utils/              # Operational error class
-│   │   ├── validators/         # Request/pagination schemas
-│   │   ├── app.ts              # Testable app factory
-│   │   └── index.ts            # Listener and graceful shutdown
-│   ├── tests/
-│   ├── drizzle.config.ts
-│   └── package.json
-├── tests/e2e/                  # Browser and accessibility checks
-├── docs/                       # Phase 1 inventory and validation report
-├── AGENTS.md
-├── README.md
-├── package.json
-├── package-lock.json
-├── eslint.config.js
-├── playwright.config.ts
-├── .prettierrc.json
-├── .prettierignore
-├── .gitignore
-└── .env.example
+  AGENTS.md
+  README.md
+  package.json / package-lock.json
+  playwright.config.ts / eslint.config.js
+  .env.example / .gitignore / .prettierrc.json / .prettierignore
+  client/
+    .env.example
+    index.html / package.json / vite.config.ts / tsconfig*.json
+    src/
+      assets/       original craft illustration
+      components/   shared UI, accessible form controls and dialogs
+      context/      real authentication provider
+      hooks/        auth, page titles and API data loading
+      i18n/         English and Hindi dictionaries
+      layouts/      public and role dashboard layouts
+      pages/        public, registration, onboarding and dashboard pages
+      routes/       route map, role guards and navigation
+      services/     Axios, token handling and auth redirects
+      types/        client API contracts
+      App.tsx / main.tsx / styles.css / phase2.css
+  server/
+    .env.example / package.json / tsconfig*.json / drizzle.config.ts
+    drizzle/        generated SQL and migration metadata
+    src/
+      config/       validated environment and CORS
+      controllers/  HTTP adapters
+      routes/       health and versioned domain routes
+      middleware/   authentication, authorization, validation and errors
+      services/     auth, profiles, admin review and user projections
+      db/           connection, migration, seed and connectivity commands
+      schemas/      six Drizzle tables and PostgreSQL enums
+      validators/   Zod input validation
+      types/        API and auth types
+      utils/        shared API errors
+      app.ts / index.ts
+    tests/          unit/integration tests and rollback-only browser fixture
+  tests/e2e/        public regressions and Phase 2 browser flows
+  docs/            phase reports, API reference and architecture
 ```
 
-The exact created-file inventory and observed validation results are in [the Phase 1 report](docs/phase-1-report.md).
+## Test isolation and local browser tests
 
-## Routes and preview behavior
+Backend integration tests require the migrated database. They create unique test identities in an outer PostgreSQL transaction; all writes roll back on success or failure. Services use [Drizzle nested transactions/savepoints](https://orm.drizzle.team/docs/transactions) inside the test transaction. Unrelated user records are not edited or deleted.
 
-Public routes are `/`, `/about`, `/artisans`, `/students`, `/login`, `/register`, and a catch-all 404 page.
+Browser tests start their own API on **127.0.0.1:5101** and Vite on **127.0.0.1:5175**, with one worker and a shared rollback-only transaction. Keep these ports free before running them; ordinary development can remain on 5173. The test-only admin fixture uses randomly generated credentials, is bound to localhost, is not compiled into the server build, and is never registered by the production app. All requests to that fixture are serialized. Closing its connection rolls back test data even after an abrupt process exit.
 
-Open `/login` and choose Artisan, Student Growth Manager or Admin, then select **Open demo dashboard**. Email/password inputs are disabled and no credentials are accepted. Registration selects a preview role; it does not create an account. The admin preview is not public admin registration.
+Chrome is the default Playwright channel. Set `PLAYWRIGHT_CHANNEL=msedge` to use Edge, or install Playwright Chromium and use an empty channel value. Reports, traces and screenshots are ignored by Git. They may contain temporary test-session tokens; do not publish them. Automated accessibility checks supplement, but do not replace, manual assistive-technology testing.
 
-Dashboard roots are `/dashboard/artisan`, `/dashboard/student`, and `/dashboard/admin`. All requested navigation entries have routes. A single configuration in `client/src/routes/dashboard-config.ts` drives the navigation, titles and route registration. Each role has a sample overview; other features show a polished, inactive placeholder.
+## Next phases and eventual deployment
 
-The temporary session lives only in React memory. Refreshing ends the preview. Unauthenticated dashboard navigation redirects to the matching role selector, preserving the destination; attempting another role's route redirects to the current role's overview. These are **UI guards only**, not real authentication or authorization. Server-enforced roles and permissions must be implemented before any private data or real workflow is added.
+Phase 3 should define the growth-request lifecycle, eligibility rules, request ownership and admin handling before implementing matching. Require appropriate account/profile verification on future workflow endpoints. Do not infer permission to start that work from Phase 2.
 
-All names, metrics and activities are labelled as sample data. The transformation story is labelled as an illustrative example. No payment processing, fund transfer, matchmaking, contracts, notifications, reviews or disputes run in this phase.
+Later phases can add managed matching, contracts, milestones, progress reports, external-payment records, reviews and disputes. Before production: hardened sessions, password recovery, contact verification, abuse controls, operational monitoring, privacy/retention policies and broader accessibility/security review.
 
-## API foundation
-
-`GET /api/health` and `GET /api/v1/health` return:
-
-```json
-{
-  "success": true,
-  "message": "Bharat Bazaar API is running"
-}
-```
-
-This endpoint checks process liveness only, not database readiness. `GET /api/v1` returns a small Phase 1/version response. Other endpoints return a JSON 404.
-
-Middleware includes Helmet, exact-origin CORS, a 100KB JSON body limit, Morgan method/status/duration logging, and centralized error responses. Query strings, bodies, credentials and stack traces are not logged or returned. CORS is not an authorization mechanism; tools without an Origin header can access the public API.
-
-Future route validators should describe `{ body, params, query }` in a Zod schema and run `validateRequest(schema)` before a controller. Use the parsed/coerced values from `res.locals.validated`. Do not mutate Express 5's read-only `request.query`. Request validators belong in `validators/`; database table schemas belong in `schemas/`.
-
-## Database preparation and next phase
-
-`server/src/db/index.ts` exports a deferred factory for a shared `pg` connection pool and Drizzle. The running Phase 1 application never imports or invokes it. No schema tables or migrations have been created, and no external database has been contacted.
-
-The [Neon connection guidance](https://neon.com/docs/connect/connection-pooling) informed the split between pooled application traffic and a direct migration connection. The factory retains the connection string's SSL options. Follow [Drizzle's PostgreSQL documentation](https://orm.drizzle.team/docs/get-started-postgresql) when adding the schema and migrations in Phase 2. Do not disable TLS certificate validation.
-
-Both Drizzle commands fail before doing any work unless `DATABASE_URL` and `DATABASE_URL_UNPOOLED` are present. When Phase 2 is authorized:
-
-1. Create the Neon project and a development branch; configure both connection URLs securely.
-2. Agree on identity, roles, profiles, verification and audit-record schemas before generating migrations.
-3. Add and review Drizzle migrations against the development database.
-4. Implement real authentication, password handling, server-side role authorization and validated onboarding APIs; replace the demo context.
-5. Add persistence and readiness checks with integration tests.
-
-Later phases can add managed matching/discovery, contracts, milestones/tasks, progress reports, business records, external-payment records, portfolio/completed projects, reviews and disputes. Their order and scope require a separate request. Phase 2 has not started.
-
-## Design and internationalization
-
-The design uses cream, terracotta, indigo, muted gold and sage with local vector artwork and system fonts. It has no remote image, font or translation dependency. Tailwind tokens and reusable components provide buttons, inputs, badges, cards, loading and empty states. Layouts include keyboard focus styles, a skip link, semantic headings, native modal mobile drawers and reduced-motion handling.
-
-English and Hindi dictionaries live in `client/src/i18n/locales/`. `react-i18next` powers the visible language selector; only language preference is stored locally. Storage-disabled browsers still work. The document language updates on selection. Add future languages through the same resource structure; do not call external translation APIs.
-
-## Planned deployment targets
-
-No deployment has been performed. Before a future deployment, remove/replace mock authentication and complete the appropriate security and integration phase.
-
-- **Neon:** managed PostgreSQL and isolated development/production branches; store URLs only on the server.
-- **Render:** Node/Express service. From the repository root, install with `npm ci`, build with `npm run build --workspace server`, and start with `npm start`. Provide server environment variables through Render. Configure `/api/health` as a liveness probe and the real Vercel origin as `CLIENT_URL`.
-- **Vercel:** React/Vite static client. Use repository-root install `npm ci`, build `npm run build --workspace client`, output `client/dist`, and configure `VITE_API_BASE_URL` to the Render `/api/v1` URL. Configure SPA fallback rewrites to `index.html` so deep links work; this has not yet been configured or tested on Vercel.
-
-## Git and validation
-
-No automatic commit is made. Git history is preserved. `node_modules`, builds, real environment files, logs, editor files, temporary uploads and test artifacts are ignored. Review `git status` before committing.
-
-Use `npm run validate`, `npm run test:e2e`, `npm run format:check`, and `npm audit` when validating a phase. The Phase 1 report records what was actually run, including environment limitations and any remaining warnings.
+Intended deployment targets are **Neon** (PostgreSQL), **Render** (Express API), and **Vercel** (Vite frontend). Configure environment variables, exact CORS origin, client SPA rewrites and trusted proxies when deployment is explicitly requested. Nothing has been deployed in this phase.

@@ -17,10 +17,15 @@ export function AudiencePage({ audience }: { audience: 'artisan' | 'student' }) 
           <p className="eyebrow">{t(`${prefix}.eyebrow`)}</p>
           <h1>{t(`${prefix}.title`)}</h1>
           <p className="hero-description">{t(`${prefix}.description`)}</p>
-          <ButtonLink to={`/login?role=${audience}`} arrow>
+          <ButtonLink to={`/register/${audience}`} arrow>
             {t(`${prefix}.cta`)}
           </ButtonLink>
           <p className="disclaimer">{t('audience.previewNote')}</p>
+          {audience === 'artisan' && (
+            <ButtonLink to="/help-register" variant="secondary">
+              {t('p2.helpRegister')}
+            </ButtonLink>
+          )}
         </div>
         <CraftArtwork compact />
       </section>
@@ -54,7 +59,7 @@ export function AudiencePage({ audience }: { audience: 'artisan' | 'student' }) 
       <section className="section container text-center next-step">
         <h2>{t('audience.nextTitle')}</h2>
         <p>{t('audience.nextText')}</p>
-        <ButtonLink to={`/login?role=${audience}`} variant="secondary" arrow>
+        <ButtonLink to={`/register/${audience}`} variant="secondary" arrow>
           {t(`${prefix}.cta`)}
         </ButtonLink>
       </section>

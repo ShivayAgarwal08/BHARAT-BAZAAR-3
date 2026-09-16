@@ -20,9 +20,9 @@ for (const path of ['/api/health', '/api/v1/health']) {
   });
 }
 
-test('v1 root reports Phase 1 and rejects unexpected query parameters', async () => {
+test('v1 root reports Phase 2 and rejects unexpected query parameters', async () => {
   const response = await request(app).get('/api/v1').expect(200);
-  assert.equal(response.body.data.phase, 1);
+  assert.equal(response.body.data.phase, 2);
   const invalid = await request(app).get('/api/v1?unknown=true').expect(400);
   assert.equal(invalid.body.error.code, 'VALIDATION_ERROR');
 });
@@ -33,7 +33,7 @@ test('unknown API endpoints return a consistent JSON 404', async () => {
   assert.equal(response.body.error.code, 'NOT_FOUND');
 });
 
-test('real auth and workflow endpoints do not exist in Phase 1', async () => {
+test('health-only app has no auth routes and later-phase workflows remain absent', async () => {
   await request(app).post('/api/v1/auth/login').send({}).expect(404);
   await request(app).post('/api/v1/payments').send({}).expect(404);
 });

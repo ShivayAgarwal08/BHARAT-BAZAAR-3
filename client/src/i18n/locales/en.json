@@ -19,12 +19,12 @@
     "artisan": "Artisan",
     "student": "Student Growth Manager",
     "admin": "Admin",
-    "preview": "Phase 1 preview",
+    "preview": "Phase 2",
     "mockData": "Sample data",
     "comingSoon": "Coming in a later phase",
     "backOverview": "Back to overview",
     "viewAll": "View all",
-    "signOut": "Leave preview",
+    "signOut": "Log out",
     "notifications": "Notifications",
     "userMenu": "Open user options"
   },
@@ -79,12 +79,18 @@
     "servicesEyebrow": "SMALL STEPS. REAL POSSIBILITIES.",
     "servicesTitle": "The everyday work that helps a business grow.",
     "services": [
-      { "title": "Social media", "description": "Tell your story, one thoughtful post at a time." },
+      {
+        "title": "Social media",
+        "description": "Tell your story, one thoughtful post at a time."
+      },
       {
         "title": "Product catalogues",
         "description": "Show the details that make your craft special."
       },
-      { "title": "Online listings", "description": "Help more people discover what you create." },
+      {
+        "title": "Online listings",
+        "description": "Help more people discover what you create."
+      },
       {
         "title": "Customer communication",
         "description": "Build relationships with clear, timely replies."
@@ -93,7 +99,10 @@
         "title": "Logistics support",
         "description": "Bring more clarity to orders and deliveries."
       },
-      { "title": "Business records", "description": "Keep sales and everyday progress organised." }
+      {
+        "title": "Business records",
+        "description": "Keep sales and everyday progress organised."
+      }
     ],
     "storyEyebrow": "IMAGINE THE POSSIBILITIES",
     "storyTitle": "A beautiful craft.\nA whole new audience.",
@@ -125,7 +134,7 @@
         "description": "Managed reviews, help and a structured path to resolve disputes."
       }
     ],
-    "trustNote": "These are the planned platform capabilities. This preview shows the experience; live workflows come in later phases.",
+    "trustNote": "Registration, profiles and admin verification are active. Matching, contracts, progress and payment records are planned for later phases.",
     "ctaTitle": "Let’s grow something\nmeaningful, together.",
     "ctaText": "Whether you work with your hands or bring digital skills, there’s a place for you here.",
     "ctaButton": "Find your place"
@@ -136,7 +145,7 @@
     "join": "Join the community",
     "note": "Designed for local ambition. Built for shared growth.",
     "copyright": "© 2026 Bharat Bazaar",
-    "preview": "Phase 1 · Experience preview"
+    "preview": "Phase 2 · Accounts & onboarding"
   },
   "about": {
     "eyebrow": "THE BHARAT BAZAAR WAY",
@@ -175,7 +184,7 @@
       },
       {
         "title": "Can I register or start a project today?",
-        "description": "This is the Phase 1 experience preview. You can explore the public pages and sample dashboards. Real accounts, verification and projects will be introduced in later phases."
+        "description": "Yes, you can create an account and complete your profile. Student profiles go to an admin for review. Growth requests and projects are planned for later phases."
       },
       {
         "title": "Which languages can I use?",
@@ -188,7 +197,7 @@
       "eyebrow": "FOR THE HANDS THAT CREATE",
       "title": "Your craft has a story.\nLet’s help it travel.",
       "description": "Get practical digital support from a student Growth Manager, so you can give more time to the work you love.",
-      "cta": "Explore the artisan preview",
+      "cta": "Register as an artisan",
       "sectionTitle": "A little support. A lot of possibility.",
       "quote": "You know your craft. Your growth partner helps the world discover it.",
       "expectationsTitle": "What you bring",
@@ -202,7 +211,7 @@
       "eyebrow": "FOR THE MINDS READY TO GROW",
       "title": "Make your skills count.\nFor someone real.",
       "description": "Become a Student Growth Manager. Support a local artisan, build practical experience and work toward paid opportunities with purpose.",
-      "cta": "Explore the student preview",
+      "cta": "Register as a student",
       "sectionTitle": "More than a line on your résumé.",
       "quote": "A stronger portfolio starts with work that makes a difference.",
       "expectationsTitle": "What you bring",
@@ -213,8 +222,8 @@
       ]
     },
     "nextTitle": "Your first step is a conversation.",
-    "nextText": "Explore how your workspace will look. Real applications and onboarding open in a later phase.",
-    "previewNote": "Preview only. No application or personal information is submitted."
+    "nextText": "Create an account and tell us about yourself. You can update your profile later.",
+    "previewNote": "Start with your profile. Partnership workflows are planned for later phases."
   },
   "auth": {
     "eyebrow": "YOUR NEXT CHAPTER STARTS HERE",
@@ -233,11 +242,11 @@
     "notMember": "New to Bharat Bazaar?",
     "chooseRole": "Find your role",
     "registerTitle": "How would you like to grow?",
-    "registerText": "Two different talents. A shared ambition. Choose a starting point to explore the experience.",
+    "registerText": "Two different talents. A shared ambition. Choose your role to create an account.",
     "artisanText": "I create products and want support growing my business online.",
     "studentText": "I want to use my digital skills to support artisans and gain experience.",
     "registrationNote": "Registration is coming in a later phase. Exploring a role does not create an account.",
-    "existing": "Already exploring?",
+    "existing": "Already have an account?",
     "adminNote": "The admin option is a demo workspace, not public admin registration."
   },
   "dashboard": {
@@ -288,7 +297,7 @@
     "paymentNote": "This area will record payments made outside Bharat Bazaar. It will not process or transfer money.",
     "featureNote": "Preview only · This feature is not active yet.",
     "scopeTitle": "A clear place to begin",
-    "scopeText": "The navigation and layout are ready. Live records, actions and permissions will be added after the database and real sign-in are connected.",
+    "scopeText": "This feature is reserved for a later phase. Accounts, profiles and admin verification are available in this phase.",
     "stats": {
       "products": "Products in catalogue",
       "milestones": "Milestones completed",
@@ -330,7 +339,8 @@
         "title": "A potential partnership identified",
         "description": "An example match aligns language and goals."
       }
-    ]
+    ],
+    "profile": "My profile"
   },
   "notFound": {
     "eyebrow": "404 · A SMALL DETOUR",

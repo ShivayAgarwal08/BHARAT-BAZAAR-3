@@ -5,6 +5,8 @@ import { Brand } from '../components/Brand';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { MobileDrawer } from '../components/MobileDrawer';
 import { ButtonLink } from '../components/ui';
+import { useAuth } from '../hooks/useAuth';
+import { homeFor } from '../services/auth-navigation';
 
 const publicLinks = [
   { to: '/about', label: 'about' },
@@ -14,6 +16,7 @@ const publicLinks = [
 
 export function PublicLayout() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   return (
     <div className="public-layout">
       <a className="skip-link" href="#main-content">
@@ -31,8 +34,8 @@ export function PublicLayout() {
           </nav>
           <div className="header-actions">
             <LanguageSwitcher />
-            <Link to="/login" className="login-link">
-              {t('common.login')}
+            <Link to={user ? homeFor(user) : '/login'} className="login-link">
+              {t(user ? 'dashboard.workspace' : 'common.login')}
             </Link>
             <ButtonLink to="/register" className="header-cta">
               {t('common.getStarted')}
@@ -45,7 +48,10 @@ export function PublicLayout() {
                     {t(`common.${label}`)}
                   </NavLink>
                 ))}
-                <Link to="/login">{t('common.login')}</Link>
+                <Link to={user ? homeFor(user) : '/login'}>
+                  {t(user ? 'dashboard.workspace' : 'common.login')}
+                </Link>
+                <Link to="/help-register">{t('p2.helpRegister')}</Link>
                 <ButtonLink to="/register">{t('common.getStarted')}</ButtonLink>
               </nav>
             </MobileDrawer>
@@ -75,6 +81,7 @@ export function PublicLayout() {
             <div>
               <h2>{t('footer.join')}</h2>
               <nav aria-label={t('footer.join')}>
+                <Link to="/help-register">{t('p2.helpRegister')}</Link>
                 <Link to="/register">{t('common.getStarted')}</Link>
                 <Link to="/login">{t('common.login')}</Link>
               </nav>

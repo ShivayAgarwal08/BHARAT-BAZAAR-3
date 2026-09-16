@@ -1,105 +1,97 @@
-import { ArrowUpRight, Check, Handshake, Leaf } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Badge, ButtonLink, Card, IconTile, TextLink } from '../../components/ui';
-import { activityIcons, overviewStats } from '../../routes/dashboard-config';
-import type { ContentItem, Role } from '../../types';
+import { useAuth } from '../../hooks/useAuth';
+import { useRemoteData } from '../../hooks/useRemoteData';
+import { Badge, Button, ButtonLink, Card, Loading } from '../../components/ui';
+import { ErrorNotice } from '../../components/FormControls';
+import type { AdminCounts, Profile, Role } from '../../types';
 
-export function OverviewPage({ role }: { role: Role }) {
+function AdminOverview() {
   const { t } = useTranslation();
-  const activities = t(role === 'admin' ? 'dashboard.adminActivities' : 'dashboard.activities', {
-    returnObjects: true,
-  }) as ContentItem[];
-  const partnerPath =
-    role === 'artisan' ? 'my-manager' : role === 'student' ? 'current-artisan' : 'matching';
-  const progressPath =
-    role === 'artisan' ? 'milestones' : role === 'student' ? 'tasks' : 'matching';
+  const { data, error, loading, reload } = useRemoteData<AdminCounts>('/admin/overview');
+  if (loading) return <Loading />;
+  if (error)
+    return (
+      <>
+        <ErrorNotice error={error} />
+        <Button onClick={reload}>{t('p2.retry')}</Button>
+      </>
+    );
   return (
     <>
       <div className="stats-grid">
-        {overviewStats[role].map(({ key, value, icon: Icon }) => (
-          <Card key={key} className="stat-card">
-            <div className="stat-top">
-              <Icon size={21} strokeWidth={1.6} aria-hidden="true" />
-              <span>{t('common.mockData')}</span>
-            </div>
-            <p>{t(`dashboard.stats.${key}`)}</p>
+        {Object.entries(data ?? {}).map(([key, value]) => (
+          <Card className="stat-card" key={key}>
+            <p>{t('p2.counts.' + key)}</p>
             <strong>{value}</strong>
           </Card>
         ))}
       </div>
-      <div className="overview-grid">
-        <Card className="focus-card">
-          <div className="panel-heading">
-            <h2>{t('dashboard.weeklyFocus')}</h2>
-            <Badge>{t('common.mockData')}</Badge>
-          </div>
-          <div className="focus-visual" aria-hidden="true">
-            <div className="catalogue-preview">
-              <span className="catalogue-pot" />
-              <div>
-                <span />
-                <span />
-                <span />
-              </div>
-            </div>
-            <div className="catalogue-check">
-              <Check size={20} />
-            </div>
-            <span className="focus-spark">✳</span>
-          </div>
-          <h3>{t(role === 'admin' ? 'dashboard.focusAdmin' : 'dashboard.focusText')}</h3>
-          <p>
-            {t(role === 'admin' ? 'dashboard.focusAdminDescription' : 'dashboard.focusDescription')}
-          </p>
-          <div className="progress-label">
-            <label htmlFor="sample-progress">{t('dashboard.progress')}</label>
-            <span>60%</span>
-          </div>
-          <progress id="sample-progress" max="100" value="60">
-            60%
-          </progress>
-          <TextLink to={`/dashboard/${role}/${progressPath}`}>{t('common.viewAll')}</TextLink>
-        </Card>
-        <Card className="activity-card">
-          <div className="panel-heading">
-            <h2>{t('dashboard.recentActivity')}</h2>
-            <ArrowUpRight size={18} aria-hidden="true" />
-          </div>
-          <ol className="activity-list">
-            {activities.map((activity, index) => (
-              <li key={activity.title}>
-                <IconTile
-                  icon={activityIcons[index] || Handshake}
-                  tone={index === 1 ? 'warm' : 'green'}
-                />
-                <div>
-                  <span className="activity-label">
-                    0{index + 1} · {t('dashboard.activityNote')}
-                  </span>
-                  <h3>{activity.title}</h3>
-                  <p>{activity.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <div className="activity-bottom">
-            <Leaf size={18} aria-hidden="true" />
-            {t('dashboard.welcome')}
-          </div>
-        </Card>
-      </div>
-      <div className="partnership-banner">
-        <span className="partnership-banner-icon">
-          <Handshake size={30} strokeWidth={1.3} aria-hidden="true" />
-        </span>
-        <div>
-          <h2>{t('dashboard.partnerTitle')}</h2>
-          <p>{t('dashboard.partnerText')}</p>
-        </div>
-        <ButtonLink to={`/dashboard/${role}/${partnerPath}`} variant="secondary" arrow>
-          {t('dashboard.partnerCta')}
+      <div className="overview-actions">
+        <ButtonLink to="/dashboard/admin/students">{t('p2.reviewStudents')}</ButtonLink>
+        <ButtonLink variant="secondary" to="/dashboard/admin/assisted-registrations">
+          {t('p2.manageAssistance')}
         </ButtonLink>
       </div>
     </>
   );
+}
+function MemberOverview({ role }: { role: 'artisan' | 'student' }) {
+  const { t } = useTranslation(),
+    { user } = useAuth();
+  const { data, error, loading, reload } = useRemoteData<Profile>('/' + role + 's/me');
+  if (loading) return <Loading />;
+  if (error)
+    return (
+      <>
+        <ErrorNotice error={error} />
+        <Button onClick={reload}>{t('p2.retry')}</Button>
+      </>
+    );
+  return (
+    <div className="overview-grid">
+      <Card className="form-card">
+        <p className="eyebrow">{t('p2.yourProfile')}</p>
+        <h2>{data?.fullName}</h2>
+        <Badge tone="green">
+          {t(data?.onboardingCompleted ? 'p2.onboardingComplete' : 'p2.draft')}
+        </Badge>
+        <p className="page-intro">{role === 'artisan' ? data?.businessName : data?.college}</p>
+        <p>
+          {data?.city}, {data?.state}
+        </p>
+        <p>{data?.languages.join(', ')}</p>
+        <ButtonLink to={'/dashboard/' + role + '/profile'} variant="secondary">
+          {t('p2.editProfile')}
+        </ButtonLink>
+      </Card>
+      <Card className="form-card">
+        <h2>{t(role === 'student' ? 'p2.verification' : 'p2.nextChapter')}</h2>
+        {role === 'student' && (
+          <Badge>{t('p2.status.' + (data?.verificationStatus ?? 'PENDING'))}</Badge>
+        )}
+        <p className="page-intro">
+          {t(
+            role === 'student'
+              ? data?.verificationStatus === 'VERIFIED'
+                ? 'p2.verifiedText'
+                : data?.verificationStatus === 'REJECTED'
+                  ? 'p2.rejectedText'
+                  : 'p2.pendingText'
+              : 'p2.laterWorkflows',
+          )}
+        </p>
+        {data?.verificationNotes && (
+          <blockquote className="review-notes">{data.verificationNotes}</blockquote>
+        )}
+        {user && (
+          <p className="field-hint">
+            {t('p2.accountStatus')}: {t('p2.status.' + user.accountStatus)}
+          </p>
+        )}
+      </Card>
+    </div>
+  );
+}
+export function OverviewPage({ role }: { role: Role }) {
+  return role === 'admin' ? <AdminOverview /> : <MemberOverview role={role} />;
 }

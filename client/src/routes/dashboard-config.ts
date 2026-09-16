@@ -1,7 +1,6 @@
 import {
   BarChart3,
   BriefcaseBusiness,
-  ClipboardCheck,
   Compass,
   FileCheck2,
   FileText,
@@ -11,14 +10,11 @@ import {
   LayoutDashboard,
   ListTodo,
   MessageSquareWarning,
-  NotebookPen,
-  Package,
   ReceiptIndianRupee,
   Sprout,
   Star,
   Target,
   TrendingUp,
-  UserCheck,
   Users,
   UserRoundPlus,
   type LucideIcon,
@@ -43,6 +39,7 @@ const reviews: DashboardSection = { slug: 'reviews', label: 'reviews', icon: Sta
 export const dashboardSections: Record<Role, DashboardSection[]> = {
   artisan: [
     overview,
+    { slug: 'profile', label: 'profile', icon: Users },
     { slug: 'my-manager', label: 'myManager', icon: Handshake },
     { slug: 'growth-requests', label: 'growthRequests', icon: Sprout },
     { slug: 'contract', label: 'contract', icon: FileText },
@@ -54,6 +51,7 @@ export const dashboardSections: Record<Role, DashboardSection[]> = {
   ],
   student: [
     overview,
+    { slug: 'profile', label: 'profile', icon: Users },
     { slug: 'current-artisan', label: 'currentArtisan', icon: Handshake },
     { slug: 'discovery', label: 'discovery', icon: Compass },
     { slug: 'contracts', label: 'contracts', icon: FileText },
@@ -77,26 +75,3 @@ export const dashboardSections: Record<Role, DashboardSection[]> = {
     reviews,
   ],
 };
-
-export const overviewStats: Record<Role, { key: string; value: string; icon: LucideIcon }[]> = {
-  artisan: [
-    { key: 'products', value: '12', icon: Package },
-    { key: 'milestones', value: '3 / 5', icon: Target },
-    { key: 'growth', value: '248', icon: TrendingUp },
-    { key: 'recorded', value: '₹2,500', icon: ReceiptIndianRupee },
-  ],
-  student: [
-    { key: 'projects', value: '1', icon: Handshake },
-    { key: 'tasks', value: '8 / 12', icon: ClipboardCheck },
-    { key: 'hours', value: '24', icon: GraduationCap },
-    { key: 'portfolio', value: '3', icon: BriefcaseBusiness },
-  ],
-  admin: [
-    { key: 'artisans', value: '24', icon: Users },
-    { key: 'students', value: '36', icon: GraduationCap },
-    { key: 'matching', value: '6', icon: Handshake },
-    { key: 'reviews', value: '8', icon: UserCheck },
-  ],
-};
-
-export const activityIcons = [Handshake, NotebookPen, Target];

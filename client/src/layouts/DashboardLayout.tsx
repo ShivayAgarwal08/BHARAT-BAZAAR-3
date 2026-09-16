@@ -1,4 +1,5 @@
-import { Bell, ChevronDown, ChevronRight, CircleHelp, Eye, LogOut, Sprout } from 'lucide-react';
+import { Bell, ChevronDown, ChevronRight, CircleHelp, LogOut, Sprout } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Brand } from '../components/Brand';
@@ -9,6 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 import { usePageTitle } from '../hooks/usePageTitle';
 import { dashboardSections } from '../routes/dashboard-config';
 import type { Role } from '../types';
+import { ErrorNotice } from '../components/FormControls';
 
 function DashboardNavigation({ role }: { role: Role }) {
   const { t } = useTranslation();
@@ -25,13 +27,18 @@ function DashboardNavigation({ role }: { role: Role }) {
 }
 
 export function DashboardLayout({ role }: { role: Role }) {
-  const { user, leavePreview } = useAuth();
+  const { user, logout } = useAuth();
+  const [logoutError, setLogoutError] = useState<unknown>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
   const { t } = useTranslation();
   const location = useLocation();
   const base = `/dashboard/${role}`;
   const slug = location.pathname.replace(/\/$/, '').slice(base.length).replace(/^\//, '');
-  const section = dashboardSections[role].find((item) => item.slug === slug);
-  const title = section ? t(`dashboard.${section.label}`) : '404';
+  const section = dashboardSections[role].find(
+    (item) => item.slug === slug || (item.slug && slug.startsWith(item.slug + '/')),
+  );
+  const title =
+    slug === 'users' ? t('p2.allUsers') : section ? t(`dashboard.${section.label}`) : '404';
   usePageTitle(`${title} · ${t(`common.${role}`)}`);
   if (!user) return null;
 
@@ -49,8 +56,8 @@ export function DashboardLayout({ role }: { role: Role }) {
         <DashboardNavigation role={role} />
         <div className="sidebar-bottom">
           <Sprout size={23} strokeWidth={1.5} aria-hidden="true" />
-          <strong>{t('dashboard.previewHelp')}</strong>
-          <p>{t('dashboard.previewHelpText')}</p>
+          <strong>{t('p2.nextChapter')}</strong>
+          <p>{t('p2.sessionNotice')}</p>
           <Link to="/about">
             {t('common.learnMore')}
             <ChevronRight size={15} aria-hidden="true" />
@@ -67,7 +74,7 @@ export function DashboardLayout({ role }: { role: Role }) {
               {t('common.brand')}
             </Link>
             <span className="desktop-workspace">{t('dashboard.workspace')}</span>
-            <Badge tone="green">{t('common.preview')}</Badge>
+            <Badge tone="green">{t('p2.phaseLabel')}</Badge>
           </div>
           <div className="dashboard-header-actions">
             <LanguageSwitcher />
@@ -83,23 +90,39 @@ export function DashboardLayout({ role }: { role: Role }) {
             </details>
             <details className="header-popover">
               <summary role="button" className="user-trigger" aria-label={t('common.userMenu')}>
-                <span className="avatar">{user.initials}</span>
+                <span className="avatar">
+                  {user.fullName
+                    .split(' ')
+                    .slice(0, 2)
+                    .map((part) => part[0])
+                    .join('')}
+                </span>
                 <ChevronDown size={14} aria-hidden="true" />
               </summary>
               <div className="popover-panel user-panel">
-                <small>{t('dashboard.profileLabel')}</small>
-                <strong>{user.name}</strong>
+                <small>{t('p2.yourProfile')}</small>
+                <strong>{user.fullName}</strong>
                 <p>{t(`common.${role}`)}</p>
-                <button onClick={leavePreview}>
+                <button
+                  disabled={loggingOut}
+                  onClick={() => {
+                    setLoggingOut(true);
+                    setLogoutError(null);
+                    void logout()
+                      .catch((error: unknown) => setLogoutError(error))
+                      .finally(() => setLoggingOut(false));
+                  }}
+                >
                   <LogOut size={17} aria-hidden="true" />
-                  {t('common.signOut')}
+                  {t(loggingOut ? 'common.loading' : 'p2.logout')}
                 </button>
+                <p className="field-hint">{t('p2.logoutHint')}</p>
               </div>
             </details>
           </div>
         </header>
         <main className="dashboard-content" id="main-content" tabIndex={-1}>
-          <nav aria-label="Breadcrumb" className="breadcrumbs">
+          <nav aria-label={t('p2.breadcrumb')} className="breadcrumbs">
             <Link to={base}>{t('dashboard.workspace')}</Link>
             <ChevronRight size={13} aria-hidden="true" />
             <span>{t(`common.${role}`)}</span>
@@ -109,21 +132,18 @@ export function DashboardLayout({ role }: { role: Role }) {
           <div className="dashboard-title">
             <div>
               <p className="eyebrow">{slug ? t(`common.${role}`) : t('dashboard.welcome')}</p>
-              <h1>{slug ? title : t('dashboard.hello', { name: user.name })}</h1>
-              <p>{slug ? t('dashboard.featureNote') : t('dashboard.overviewText')}</p>
+              <h1>{slug ? title : t('dashboard.hello', { name: user.fullName })}</h1>
+              <p>{t('p2.workspaceIntro')}</p>
             </div>
             <span className="dashboard-title-icon">
               <Sprout size={31} strokeWidth={1.4} aria-hidden="true" />
             </span>
           </div>
-          <div className="mock-banner">
-            <Eye size={18} aria-hidden="true" />
-            <p>{t('dashboard.mockNotice')}</p>
-          </div>
+          <ErrorNotice error={logoutError} />
           <Outlet />
           <div className="dashboard-footer-note">
             <CircleHelp size={16} aria-hidden="true" />
-            <span>{t('dashboard.featureNote')}</span>
+            <span>{t('p2.sessionNotice')}</span>
           </div>
         </main>
       </div>

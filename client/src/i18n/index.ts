@@ -2,6 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
 import hi from './locales/hi.json';
+import enPhase2 from './locales/en-phase2.json';
+import hiPhase2 from './locales/hi-phase2.json';
 
 function preferredLanguage() {
   try {
@@ -12,7 +14,10 @@ function preferredLanguage() {
 }
 
 void i18n.use(initReactI18next).init({
-  resources: { en: { translation: en }, hi: { translation: hi } },
+  resources: {
+    en: { translation: { ...en, p2: enPhase2 } },
+    hi: { translation: { ...hi, p2: hiPhase2 } },
+  },
   lng: preferredLanguage(),
   fallbackLng: 'en',
   supportedLngs: ['en', 'hi'],

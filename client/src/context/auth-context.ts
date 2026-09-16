@@ -1,10 +1,12 @@
 import { createContext } from 'react';
-import type { MockUser, Role } from '../types';
+import type { AuthSession, User } from '../types';
 
 interface AuthContextValue {
-  user: MockUser | null;
-  enterPreview: (role: Role) => void;
-  leavePreview: () => void;
+  user: User | null;
+  loading: boolean;
+  sessionError: unknown;
+  acceptSession: (session: AuthSession) => void;
+  refreshUser: () => Promise<User>;
+  logout: () => Promise<void>;
 }
-
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);

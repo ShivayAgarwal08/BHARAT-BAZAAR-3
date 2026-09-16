@@ -16,7 +16,7 @@ export function RegisterPage() {
       </div>
       <div className="registration-cards">
         {(['artisan', 'student'] as const).map((role) => (
-          <Link to={`/login?role=${role}`} key={role} className={`registration-card ${role}-card`}>
+          <Link to={`/register/${role}`} key={role} className={`registration-card ${role}-card`}>
             <IconTile
               icon={role === 'artisan' ? HandHeart : GraduationCap}
               tone={role === 'artisan' ? 'warm' : 'indigo'}
@@ -32,8 +32,11 @@ export function RegisterPage() {
       </div>
       <p className="registration-notice">
         <Info size={18} aria-hidden="true" />
-        {t('auth.registrationNote')}
+        {t('p2.registrationNote')}
       </p>
+      <Link className="help-link" to="/help-register">
+        {t('p2.helpRegister')}
+      </Link>
       <p className="auth-bottom">
         {t('auth.existing')} <Link to="/login">{t('common.login')}</Link>
       </p>

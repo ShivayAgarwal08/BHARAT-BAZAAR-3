@@ -25,6 +25,8 @@ export const envSchema = z.object({
   DATABASE_URL: optionalValue(postgresUrl),
   DATABASE_URL_UNPOOLED: optionalValue(postgresUrl),
   JWT_SECRET: optionalValue(z.string().min(32)),
+  ADMIN_EMAIL: optionalValue(z.string().trim().toLowerCase().email().max(254)),
+  ADMIN_PASSWORD: optionalValue(z.string().min(10).max(72)),
   JWT_EXPIRES_IN: z
     .string()
     .regex(/^\d+[smhd]$/, 'Use a duration such as 7d')

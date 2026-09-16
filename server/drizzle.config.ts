@@ -1,11 +1,9 @@
 import { defineConfig } from 'drizzle-kit';
 import { env } from './src/config/env.js';
 
-// Guard both commands. Phase 1 must never generate/apply migrations by accident.
+// Application traffic uses the pooled URL; migration tooling uses only the direct URL.
 if (!env.DATABASE_URL || !env.DATABASE_URL_UNPOOLED) {
-  throw new Error(
-    'Database tooling is unavailable. Set DATABASE_URL and DATABASE_URL_UNPOOLED in server/.env during Phase 2.',
-  );
+  throw new Error('Set DATABASE_URL and DATABASE_URL_UNPOOLED in root .env or server/.env.');
 }
 
 export default defineConfig({

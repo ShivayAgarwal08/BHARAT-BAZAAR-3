@@ -1,0 +1,16 @@
+export const skillData = [
+  ['Instagram Management', 'instagram-management', 'Social media'],
+  ['Canva Design', 'canva-design', 'Design'],
+  ['Video Editing', 'video-editing', 'Content'],
+  ['Product Photography', 'product-photography', 'Content'],
+  ['WhatsApp Business', 'whatsapp-business', 'Communication'],
+  ['English Communication', 'english-communication', 'Communication'],
+  ['Excel', 'excel', 'Business records'],
+  ['Google Sheets', 'google-sheets', 'Business records'],
+  ['Product Catalogue', 'product-catalogue', 'Commerce'],
+  ['E-commerce Listings', 'e-commerce-listings', 'Commerce'],
+  ['Customer Communication', 'customer-communication', 'Communication'],
+  ['Logistics Coordination', 'logistics-coordination', 'Operations'],
+  ['Website Basics', 'website-basics', 'Technology'],
+  ['Google Business Profile', 'google-business-profile', 'Commerce'],
+].map(([name, slug, category]) => ({ name: name!, slug: slug!, category: category! }));

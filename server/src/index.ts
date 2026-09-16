@@ -1,9 +1,15 @@
 import { createApp } from './app.js';
 import { env } from './config/env.js';
+import { createDatabase } from './db/index.js';
+import { authSecret } from './services/auth-service.js';
 
-const server = createApp(env).listen(env.PORT, () => {
+if (!env.DATABASE_URL) throw new Error('DATABASE_URL is required. Check the environment example.');
+authSecret(env);
+const database = createDatabase(env.DATABASE_URL);
+
+const server = createApp(env, database.db).listen(env.PORT, () => {
   console.info(`Bharat Bazaar API: http://localhost:${env.PORT}/api/health`);
-  console.info('Phase 1: authentication and database operations are not enabled.');
+  console.info('Phase 2: real accounts and onboarding enabled.');
 });
 
 server.on('error', (error: NodeJS.ErrnoException) => {
@@ -14,7 +20,9 @@ server.on('error', (error: NodeJS.ErrnoException) => {
 });
 
 function shutdown() {
-  server.close(() => process.exit(0));
+  server.close(() => {
+    void database.close().then(() => process.exit(0));
+  });
   setTimeout(() => process.exit(1), 10_000).unref();
 }
 process.once('SIGTERM', shutdown);

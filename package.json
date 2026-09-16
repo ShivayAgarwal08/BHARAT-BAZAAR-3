@@ -26,7 +26,9 @@
     "format:check": "prettier --check .",
     "validate": "npm run typecheck && npm run lint && npm test && npm run build",
     "db:generate": "npm run db:generate --workspace server",
-    "db:migrate": "npm run db:migrate --workspace server"
+    "db:migrate": "npm run db:migrate --workspace server",
+    "db:check": "npm run db:check --workspace server",
+    "db:seed": "npm run db:seed --workspace server"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
