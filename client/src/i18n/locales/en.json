@@ -1,0 +1,345 @@
+{
+  "common": {
+    "brand": "Bharat Bazaar",
+    "brandNote": "ROOTED IN CRAFT. CONNECTED BY PEOPLE.",
+    "home": "Home",
+    "about": "How it works",
+    "artisans": "For artisans",
+    "students": "For students",
+    "login": "Log in",
+    "getStarted": "Get started",
+    "learnMore": "Learn more",
+    "backHome": "Back to home",
+    "continue": "Continue",
+    "close": "Close",
+    "menu": "Open navigation",
+    "language": "Choose language",
+    "skip": "Skip to content",
+    "loading": "Loading…",
+    "artisan": "Artisan",
+    "student": "Student Growth Manager",
+    "admin": "Admin",
+    "preview": "Phase 1 preview",
+    "mockData": "Sample data",
+    "comingSoon": "Coming in a later phase",
+    "backOverview": "Back to overview",
+    "viewAll": "View all",
+    "signOut": "Leave preview",
+    "notifications": "Notifications",
+    "userMenu": "Open user options"
+  },
+  "landing": {
+    "eyebrow": "LOCAL CRAFT. LIMITLESS POSSIBILITIES.",
+    "titleOne": "Artisans create.",
+    "titleTwo": "Students grow.",
+    "titleThree": "We connect.",
+    "subtitle": "A multilingual platform helping artisans access student digital managers while students gain verified experience and paid opportunities.",
+    "artisanCta": "I’m an artisan",
+    "studentCta": "I’m a student",
+    "heroNote": "Your craft. Their skills. A shared way forward.",
+    "artCaption": "Made by hand. Ready for the world.",
+    "artSubcaption": "A new chapter for local craft",
+    "floatTitle": "A partnership with purpose",
+    "floatText": "Craft + digital skills",
+    "imageAlt": "Original illustration of terracotta pottery, a woven basket and indigo textiles in a sunlit craft studio",
+    "trustStrip": ["Human-led matching", "Support at every step", "English & हिन्दी"],
+    "howEyebrow": "GOOD THINGS GROW TOGETHER",
+    "howTitle": "From local talent to shared growth.",
+    "howDescription": "More than an introduction. A guided partnership, from the first conversation to the next milestone.",
+    "steps": [
+      {
+        "title": "Tell us your story",
+        "description": "Artisans share their craft and goals. Students share their skills, interests and availability."
+      },
+      {
+        "title": "Find your growth partner",
+        "description": "The platform helps verify profiles and match people around language, skills and real business needs."
+      },
+      {
+        "title": "Build something together",
+        "description": "Agree on the work, track milestones and get support as your partnership moves forward."
+      }
+    ],
+    "benefitEyebrow": "TWO TALENTS. ONE SHARED JOURNEY.",
+    "benefitTitle": "You bring what you do best.",
+    "artisanTitle": "Keep creating. We’ll help you grow.",
+    "artisanText": "Your craft deserves to be seen. Work with a student who understands your goals and helps you take your business online.",
+    "artisanBenefits": [
+      "A dedicated digital growth partner",
+      "Support in a language you’re comfortable with",
+      "Clear tasks, milestones and business records"
+    ],
+    "studentTitle": "Put your skills to meaningful work.",
+    "studentText": "Help a real local business grow. Turn what you’re learning into practical experience, a stronger portfolio and paid opportunities.",
+    "studentBenefits": [
+      "Practical experience beyond the classroom",
+      "A portfolio of real, measurable work",
+      "A supported path to paid opportunities"
+    ],
+    "servicesEyebrow": "SMALL STEPS. REAL POSSIBILITIES.",
+    "servicesTitle": "The everyday work that helps a business grow.",
+    "services": [
+      { "title": "Social media", "description": "Tell your story, one thoughtful post at a time." },
+      {
+        "title": "Product catalogues",
+        "description": "Show the details that make your craft special."
+      },
+      { "title": "Online listings", "description": "Help more people discover what you create." },
+      {
+        "title": "Customer communication",
+        "description": "Build relationships with clear, timely replies."
+      },
+      {
+        "title": "Logistics support",
+        "description": "Bring more clarity to orders and deliveries."
+      },
+      { "title": "Business records", "description": "Keep sales and everyday progress organised." }
+    ],
+    "storyEyebrow": "IMAGINE THE POSSIBILITIES",
+    "storyTitle": "A beautiful craft.\nA whole new audience.",
+    "storyText": "Imagine a pottery artisan in Jaipur teaming up with a student to photograph a collection, build a digital catalogue and tell the story behind every piece.",
+    "storyBefore": "Before",
+    "storyBeforeText": "A collection seen only by visitors to the workshop.",
+    "storyAfter": "A possible next chapter",
+    "storyAfterText": "An organised catalogue, a consistent online presence and easier customer conversations.",
+    "storyDisclaimer": "Illustrative example — not a real customer story or a promise of results.",
+    "storyLabel": "THE CRAFT → THE CONNECTION → THE POSSIBILITY",
+    "trustEyebrow": "A PLATFORM THAT STAYS INVOLVED",
+    "trustTitle": "Built around people.\nBacked by a process.",
+    "trustText": "A good partnership needs more than a profile. Bharat Bazaar is designed to keep expectations clear and support close by.",
+    "trustFeatures": [
+      {
+        "title": "Thoughtful verification",
+        "description": "Profile checks and assisted onboarding to build a stronger starting point."
+      },
+      {
+        "title": "Clear agreements",
+        "description": "Defined scope, milestones and responsibilities before work begins."
+      },
+      {
+        "title": "Visible progress",
+        "description": "A shared place for tasks, reports and external-payment records."
+      },
+      {
+        "title": "Support when it matters",
+        "description": "Managed reviews, help and a structured path to resolve disputes."
+      }
+    ],
+    "trustNote": "These are the planned platform capabilities. This preview shows the experience; live workflows come in later phases.",
+    "ctaTitle": "Let’s grow something\nmeaningful, together.",
+    "ctaText": "Whether you work with your hands or bring digital skills, there’s a place for you here.",
+    "ctaButton": "Find your place"
+  },
+  "footer": {
+    "text": "Connecting the hands that create with the minds that help them grow.",
+    "explore": "Explore",
+    "join": "Join the community",
+    "note": "Designed for local ambition. Built for shared growth.",
+    "copyright": "© 2026 Bharat Bazaar",
+    "preview": "Phase 1 · Experience preview"
+  },
+  "about": {
+    "eyebrow": "THE BHARAT BAZAAR WAY",
+    "title": "A connection is just\nthe beginning.",
+    "description": "Local artisans have deep knowledge of their craft. College students bring fresh digital skills. We’re building the support system that helps them grow together.",
+    "missionTitle": "Local talent deserves a wider world.",
+    "missionText": "Our purpose is to make practical digital support more accessible to artisans, while giving students meaningful experience with real businesses. The platform stays involved in verification, matching and the work that follows.",
+    "journeyTitle": "A guided journey, from hello to progress.",
+    "journey": [
+      {
+        "title": "Introduce yourself",
+        "description": "Share your craft or skills, preferred language and goals. Assisted registration will support artisans who need help getting started."
+      },
+      {
+        "title": "Get verified and connected",
+        "description": "The team reviews profiles and helps find a suitable partner through managed matching and discovery."
+      },
+      {
+        "title": "Agree on a clear plan",
+        "description": "Set the scope, responsibilities, milestones and payment terms together before starting."
+      },
+      {
+        "title": "Work, review and grow",
+        "description": "Track progress, record payments made outside the platform and get help when needed. Reflect on the work through reviews."
+      }
+    ],
+    "faqTitle": "A few things to know.",
+    "faqs": [
+      {
+        "title": "Is Bharat Bazaar a freelancer directory?",
+        "description": "It is a managed growth platform. The planned experience includes verification, matching, agreements, progress tracking and ongoing support throughout a partnership."
+      },
+      {
+        "title": "Does the platform process payments?",
+        "description": "No. The planned Payments area records payments made outside Bharat Bazaar. This phase has no payment gateway, fund transfers or payment verification."
+      },
+      {
+        "title": "Can I register or start a project today?",
+        "description": "This is the Phase 1 experience preview. You can explore the public pages and sample dashboards. Real accounts, verification and projects will be introduced in later phases."
+      },
+      {
+        "title": "Which languages can I use?",
+        "description": "This foundation includes English and Hindi. Use the language selector in the header to switch. The translation structure can support more languages later."
+      }
+    ]
+  },
+  "audience": {
+    "artisan": {
+      "eyebrow": "FOR THE HANDS THAT CREATE",
+      "title": "Your craft has a story.\nLet’s help it travel.",
+      "description": "Get practical digital support from a student Growth Manager, so you can give more time to the work you love.",
+      "cta": "Explore the artisan preview",
+      "sectionTitle": "A little support. A lot of possibility.",
+      "quote": "You know your craft. Your growth partner helps the world discover it.",
+      "expectationsTitle": "What you bring",
+      "expectations": [
+        "Your products, craft knowledge and business goals",
+        "Time to share feedback and make decisions together",
+        "A willingness to learn and try small digital steps"
+      ]
+    },
+    "student": {
+      "eyebrow": "FOR THE MINDS READY TO GROW",
+      "title": "Make your skills count.\nFor someone real.",
+      "description": "Become a Student Growth Manager. Support a local artisan, build practical experience and work toward paid opportunities with purpose.",
+      "cta": "Explore the student preview",
+      "sectionTitle": "More than a line on your résumé.",
+      "quote": "A stronger portfolio starts with work that makes a difference.",
+      "expectationsTitle": "What you bring",
+      "expectations": [
+        "Digital skills and the curiosity to keep learning",
+        "A realistic time commitment alongside your studies",
+        "Respect for the artisan’s voice, craft and decisions"
+      ]
+    },
+    "nextTitle": "Your first step is a conversation.",
+    "nextText": "Explore how your workspace will look. Real applications and onboarding open in a later phase.",
+    "previewNote": "Preview only. No application or personal information is submitted."
+  },
+  "auth": {
+    "eyebrow": "YOUR NEXT CHAPTER STARTS HERE",
+    "title": "Welcome to\nBharat Bazaar.",
+    "subtitle": "A shared space for craft, skills and possibility.",
+    "loginTitle": "A look inside your workspace",
+    "loginText": "Choose a role to explore a sample dashboard.",
+    "demoTitle": "Preview mode — no account needed",
+    "demoText": "Sign-in is not active yet. These are fictional profiles and sample data. Refreshing the page ends your preview.",
+    "email": "Email address",
+    "password": "Password",
+    "emailPlaceholder": "Sign-in available in a later phase",
+    "passwordPlaceholder": "No credentials needed",
+    "roleLabel": "Choose a preview role",
+    "openDemo": "Open demo dashboard",
+    "notMember": "New to Bharat Bazaar?",
+    "chooseRole": "Find your role",
+    "registerTitle": "How would you like to grow?",
+    "registerText": "Two different talents. A shared ambition. Choose a starting point to explore the experience.",
+    "artisanText": "I create products and want support growing my business online.",
+    "studentText": "I want to use my digital skills to support artisans and gain experience.",
+    "registrationNote": "Registration is coming in a later phase. Exploring a role does not create an account.",
+    "existing": "Already exploring?",
+    "adminNote": "The admin option is a demo workspace, not public admin registration."
+  },
+  "dashboard": {
+    "workspace": "Workspace",
+    "overview": "Overview",
+    "myManager": "My Manager",
+    "growthRequests": "Growth Requests",
+    "contract": "Contract",
+    "milestones": "Milestones",
+    "businessGrowth": "Business Growth",
+    "payments": "Payments",
+    "reviews": "Reviews",
+    "getHelp": "Get Help",
+    "currentArtisan": "Current Artisan",
+    "discovery": "Discovery",
+    "contracts": "Contracts",
+    "tasks": "Tasks",
+    "progressReports": "Progress Reports",
+    "completedProjects": "Completed Projects",
+    "portfolio": "Portfolio",
+    "artisans": "Artisans",
+    "assistedRegistrations": "Assisted Registrations",
+    "students": "Students",
+    "matching": "Matching",
+    "disputes": "Disputes",
+    "welcome": "A little progress, every day.",
+    "hello": "Welcome, {{name}}",
+    "overviewText": "Here’s a glimpse of how your growth journey will come together.",
+    "mockNotice": "Demo workspace · All names, numbers and activities below are fictional. No changes are saved.",
+    "previewHelp": "Explore with confidence",
+    "previewHelpText": "This is a preview of your future workspace.",
+    "noNotifications": "You’re all caught up",
+    "noNotificationsText": "Real notifications will appear here in a later phase.",
+    "profileLabel": "Sample profile",
+    "weeklyFocus": "This week’s focus",
+    "focusText": "Bring the first collection online",
+    "focusDescription": "An example of a shared milestone, with a clear plan and a little progress each day.",
+    "focusAdmin": "Support the next great partnership",
+    "focusAdminDescription": "An example of how profile reviews and matching activity will come together.",
+    "progress": "Sample progress",
+    "recentActivity": "A glimpse of the journey",
+    "activityNote": "Illustrative activity",
+    "partnerTitle": "Growing, together",
+    "partnerText": "Your workspace will keep people, plans and progress in one place.",
+    "partnerCta": "Explore your partnership",
+    "noFeatureTitle": "Room for your next chapter.",
+    "noFeatureText": "The {{feature}} workspace is ready for a later phase. You’ll find the tools and information for this part of your journey here.",
+    "paymentNote": "This area will record payments made outside Bharat Bazaar. It will not process or transfer money.",
+    "featureNote": "Preview only · This feature is not active yet.",
+    "scopeTitle": "A clear place to begin",
+    "scopeText": "The navigation and layout are ready. Live records, actions and permissions will be added after the database and real sign-in are connected.",
+    "stats": {
+      "products": "Products in catalogue",
+      "milestones": "Milestones completed",
+      "growth": "Catalogue views",
+      "recorded": "External payments recorded",
+      "projects": "Active partnership",
+      "tasks": "Tasks completed",
+      "hours": "Learning hours",
+      "portfolio": "Portfolio pieces",
+      "artisans": "Artisan profiles",
+      "students": "Student profiles",
+      "matching": "Awaiting matching",
+      "reviews": "Profiles to review"
+    },
+    "activities": [
+      {
+        "title": "A shared plan takes shape",
+        "description": "Goals and next steps discussed together."
+      },
+      {
+        "title": "The first catalogue comes together",
+        "description": "Product stories and photographs organised."
+      },
+      {
+        "title": "Time to reflect on progress",
+        "description": "A sample milestone is ready for review."
+      }
+    ],
+    "adminActivities": [
+      {
+        "title": "Artisan profile ready for review",
+        "description": "An example assisted registration enters the queue."
+      },
+      {
+        "title": "New student skills added",
+        "description": "A sample profile highlights catalogue experience."
+      },
+      {
+        "title": "A potential partnership identified",
+        "description": "An example match aligns language and goals."
+      }
+    ]
+  },
+  "notFound": {
+    "eyebrow": "404 · A SMALL DETOUR",
+    "title": "This path is still\nbeing woven.",
+    "text": "We couldn’t find the page you’re looking for. Let’s get you back to familiar ground."
+  },
+  "error": {
+    "title": "Something interrupted your visit.",
+    "text": "Please reload the page to start again.",
+    "reload": "Reload page"
+  }
+}
