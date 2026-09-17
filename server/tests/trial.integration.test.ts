@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import bcrypt from 'bcrypt';
 import request from 'supertest';
+import { eq } from 'drizzle-orm';
 import { createApp } from '../src/app.js';
-import { users } from '../src/schemas/index.js';
+import { assignments, contracts, users } from '../src/schemas/index.js';
 import { credentials, testConfig, withTestDatabase } from './test-database.js';
 
 test(
@@ -278,12 +279,120 @@ test(
           .set(auth(artisanToken))
           .send({ type: 'BASELINE', measurementDate: '2026-10-01', monthlyOrders: 3 })
           .expect(201);
-        await request(app)
-          .post('/api/v1/artisans/me/contracts/' + contractId + '/metrics')
-          .set(auth(artisanToken))
-          .send({ type: 'BASELINE', measurementDate: '2026-10-02', monthlyOrders: 4 })
-          .expect(409);
+        // An expected PostgreSQL constraint error must not poison the shared fixture transaction.
+        const rollbackDuplicate = new Error('ROLLBACK_DUPLICATE_METRIC_CHECK');
+        await assert.rejects(
+          db.transaction(async (tx) => {
+            await request(createApp(testConfig, tx))
+              .post('/api/v1/artisans/me/contracts/' + contractId + '/metrics')
+              .set(auth(artisanToken))
+              .send({ type: 'BASELINE', measurementDate: '2026-10-02', monthlyOrders: 4 })
+              .expect(409);
+            throw rollbackDuplicate;
+          }),
+          (error: unknown) => error === rollbackDuplicate,
+        );
       });
+      await t.test(
+        'completed pilot stays linked and owned alongside a current paid engagement',
+        async () => {
+          await request(app)
+            .post('/api/v1/artisans/me/contracts/' + contractId + '/metrics')
+            .set(auth(artisanToken))
+            .send({ type: 'FINAL', measurementDate: '2026-12-31', monthlyOrders: 8 })
+            .expect(201);
+          const completion = await request(app)
+            .post('/api/v1/contracts/' + contractId + '/completion')
+            .set(auth(artisanToken))
+            .send({
+              completionSummary: 'Catalogue delivered and approved.',
+              finalMetricsConfirmed: true,
+            })
+            .expect(201);
+          await request(app)
+            .patch('/api/v1/admin/completions/' + completion.body.data.id)
+            .set(auth(adminToken))
+            .send({ status: 'APPROVED' })
+            .expect(200);
+
+          // This later engagement is fixture data within the same rollback transaction.
+          const [pilotAssignment] = await db
+            .select()
+            .from(assignments)
+            .where(eq(assignments.id, assignmentId));
+          const [pilotContract] = await db
+            .select()
+            .from(contracts)
+            .where(eq(contracts.id, contractId));
+          assert.ok(pilotAssignment);
+          assert.ok(pilotContract);
+          const [paidAssignment] = await db
+            .insert(assignments)
+            .values({
+              artisanProfileId: pilotAssignment.artisanProfileId,
+              studentProfileId: pilotAssignment.studentProfileId,
+              assignedByAdminId: pilotAssignment.assignedByAdminId,
+              type: 'PAID',
+              status: 'ACTIVE',
+            })
+            .returning();
+          assert.ok(paidAssignment);
+          const [paidContract] = await db
+            .insert(contracts)
+            .values({
+              ...pilotContract,
+              id: undefined,
+              assignmentId: paidAssignment.id,
+              contractType: 'PAID',
+              artisanPaymentAmount: '2500.00',
+              title: 'Later paid fixture engagement',
+              status: 'ACTIVE',
+            })
+            .returning();
+          assert.ok(paidContract);
+          const detail = (
+            await request(app)
+              .get('/api/v1/artisans/me/growth-requests/' + requestId)
+              .set(auth(artisanToken))
+              .expect(200)
+          ).body.data;
+          assert.equal(detail.request.status, 'COMPLETED');
+          assert.equal(detail.assignment.id, assignmentId);
+          assert.equal(detail.assignment.status, 'COMPLETED');
+          assert.equal(detail.discovery.assignmentId, assignmentId);
+          assert.equal(detail.discovery.status, 'REVIEWED');
+          assert.equal(detail.contract.id, contractId);
+          assert.equal(detail.contract.status, 'COMPLETED');
+          const opened = (
+            await request(app)
+              .get('/api/v1/artisans/me/contracts/' + detail.contract.id)
+              .set(auth(artisanToken))
+              .expect(200)
+          ).body.data;
+          assert.equal(opened.contractType, 'FREE_TRIAL');
+          assert.equal(Number(opened.artisanPaymentAmount), 0);
+          const outsiderArtisanToken = (
+            await request(app).post('/api/v1/auth/register/artisan').send(credentials()).expect(201)
+          ).body.data.token;
+          await request(app)
+            .get('/api/v1/artisans/me/growth-requests/' + requestId)
+            .set(auth(outsiderArtisanToken))
+            .expect(403);
+          await request(app)
+            .get('/api/v1/artisans/me/contracts/' + contractId)
+            .set(auth(outsiderArtisanToken))
+            .expect(403);
+          const current = (
+            await request(app)
+              .get('/api/v1/artisans/me/current-engagement')
+              .set(auth(artisanToken))
+              .expect(200)
+          ).body.data;
+          assert.equal(current.assignment.id, paidAssignment.id);
+          assert.equal(current.contract.id, paidContract.id);
+          assert.equal(current.contract.contractType, 'PAID');
+        },
+      );
     });
   },
 );

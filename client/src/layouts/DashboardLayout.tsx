@@ -37,8 +37,16 @@ export function DashboardLayout({ role }: { role: Role }) {
   const section = dashboardSections[role].find(
     (item) => item.slug === slug || (item.slug && slug.startsWith(item.slug + '/')),
   );
+  // History/detail routes remain accessible without adding operational sidebar tabs.
+  const artisanHistoryTitle =
+    role === 'artisan' && /^growth-requests(?:\/[^/]+)?$/.test(slug)
+      ? t('focus.viewPilotHistory')
+      : role === 'artisan' && /^contract\/[^/]+$/.test(slug)
+        ? t('p3.viewContract')
+        : null;
   const title =
-    slug === 'users' ? t('p2.allUsers') : section ? t(`dashboard.${section.label}`) : '404';
+    artisanHistoryTitle ??
+    (slug === 'users' ? t('p2.allUsers') : section ? t(`dashboard.${section.label}`) : '404');
   usePageTitle(`${title} · ${t(`common.${role}`)}`);
   if (!user) return null;
 

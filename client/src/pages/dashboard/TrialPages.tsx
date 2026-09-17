@@ -84,7 +84,10 @@ export function ArtisanGrowthRequestsPage() {
                 <Status value={request.status} />
                 <p>{request.problemDescription}</p>
               </div>
-              <ButtonLink variant="secondary" to={request.id}>
+              <ButtonLink
+                variant="secondary"
+                to={'/dashboard/artisan/growth-requests/' + request.id}
+              >
                 {t('p3.open')}
               </ButtonLink>
             </Card>
