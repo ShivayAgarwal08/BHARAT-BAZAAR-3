@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { ButtonLink, Card, EmptyState, Loading, Badge } from '../../components/ui';
 import { ErrorNotice } from '../../components/FormControls';
 import { useAuth } from '../../hooks/useAuth';
 import { useRemoteData } from '../../hooks/useRemoteData';
+import { ArtisanGrowthRequestsPage } from './TrialPages';
 import type { BusinessMetric, CurrentEngagement } from '../../types';
 
 function dateRange(start?: string, end?: string) {
@@ -249,7 +251,7 @@ export function MyArtisanPage() {
   return <EngagementDetail role="student" />;
 }
 
-export function MyGrowthPage() {
+function MyGrowthContent() {
   const { t } = useTranslation();
   const { data, error, loading } = useCurrentEngagement('artisan');
   if (loading) return <Loading />;
@@ -270,10 +272,15 @@ export function MyGrowthPage() {
       <Card className="form-card">
         <h2>{t('focus.completedWork')}</h2>
         <EngagementTasks engagement={data} />
-        <ButtonLink to="/dashboard/artisan/pilot-history" variant="secondary">
+        <ButtonLink to="/dashboard/artisan/my-growth?history=1" variant="secondary">
           {t('focus.viewPilotHistory')}
         </ButtonLink>
       </Card>
     </section>
   );
+}
+
+export function MyGrowthPage() {
+  const [searchParams] = useSearchParams();
+  return searchParams.get('history') === '1' ? <ArtisanGrowthRequestsPage /> : <MyGrowthContent />;
 }
