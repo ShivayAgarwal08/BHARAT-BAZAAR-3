@@ -186,6 +186,7 @@ export function AppRoutes() {
                   <Route path="my-growth" element={<MyGrowthPage />} />
                   <Route path="my-growth/new" element={<ArtisanRequestFormPage />} />
                   <Route path="help" element={<AssistedRegistrationPage />} />
+                  <Route path="pilot-history" element={<ArtisanGrowthRequestsPage />} />
                   <Route path="growth-requests" element={<ArtisanGrowthRequestsPage />} />
                   <Route path="growth-requests/new" element={<ArtisanRequestFormPage />} />
                   <Route path="growth-requests/:id" element={<ArtisanRequestDetailPage />} />
