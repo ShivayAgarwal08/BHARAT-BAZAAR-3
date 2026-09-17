@@ -368,6 +368,18 @@ export function ContractPage({ role }: { role: 'artisan' | 'student' }) {
       <Card className="form-card">
         <h2>{c.title}</h2>
         <Status value={c.status} />
+        <div className="engagement-payment-context">
+          <Badge tone={c.contractType === 'FREE_TRIAL' ? 'green' : 'indigo'}>
+            {t(c.contractType === 'FREE_TRIAL' ? 'focus.platformSponsored' : 'focus.artisanPaid')}
+          </Badge>
+          <p>
+            {c.contractType === 'FREE_TRIAL'
+              ? t(role === 'artisan' ? 'focus.artisanCostZero' : 'focus.studentStipendSponsored')
+              : t(role === 'artisan' ? 'focus.externalPayment' : 'focus.studentExternalPayment', {
+                  amount: c.artisanPaymentAmount,
+                })}
+          </p>
+        </div>
         <dl className="profile-details">
           {(
             [

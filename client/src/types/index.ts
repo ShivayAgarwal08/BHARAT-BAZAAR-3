@@ -156,6 +156,7 @@ export interface DiscoveryReport {
 export interface TrialContract {
   id: string;
   assignmentId: string;
+  contractType: 'FREE_TRIAL' | 'PAID';
   title: string;
   status: string;
   version: number;
@@ -166,6 +167,8 @@ export interface TrialContract {
   exclusions: string;
   startDate: string;
   endDate: string;
+  artisanPaymentAmount: string;
+  platformStudentStipend: string | null;
   artisanAcceptedVersion: number | null;
   studentAcceptedVersion: number | null;
 }

@@ -8,7 +8,7 @@ type Person = { fullName: string; businessName?: string | null };
 type Contract = {
   id: string;
   title: string;
-  contractType: string;
+  contractType: 'FREE_TRIAL' | 'PAID';
   status: string;
   startDate: string;
   endDate: string;
@@ -219,12 +219,19 @@ export function ParticipantContractDetailPage() {
   );
 }
 export function StudentPortfolioPage() {
+  const { t } = useTranslation();
   return (
     <Records endpoint="/students/me/portfolio">
       {(r) => (
         <>
           <h2>{r.contract?.title}</h2>
           <p>{person(r.artisan)}</p>
+          {r.contract?.contractType === 'FREE_TRIAL' && (
+            <div className="engagement-payment-context">
+              <Badge tone="green">{t('focus.platformSponsored')}</Badge>
+              <p>{t('focus.studentStipendSponsored')}</p>
+            </div>
+          )}
           <p>{r.contract?.deliverables}</p>
           <p>
             {r.contract?.startDate} – {r.contract?.endDate} · <State value={r.contract?.status} />
