@@ -164,8 +164,12 @@ export function StudentMarketplaceProfilePage() {
             </dd>
           </div>
           <div>
-            <dt>Expected monthly rate</dt>
-            <dd>₹{student.expectedMonthlyRate ?? 'Not listed'}</dd>
+            <dt>{t('focus.expectedRate')}</dt>
+            <dd>
+              {student.expectedMonthlyRate === null
+                ? t('focus.notListed')
+                : `₹${student.expectedMonthlyRate}`}
+            </dd>
           </div>
         </dl>
         {student.portfolioUrl && (

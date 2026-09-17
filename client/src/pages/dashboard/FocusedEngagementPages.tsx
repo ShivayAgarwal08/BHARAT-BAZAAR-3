@@ -270,6 +270,9 @@ export function MyGrowthPage() {
       <Card className="form-card">
         <h2>{t('focus.completedWork')}</h2>
         <EngagementTasks engagement={data} />
+        <ButtonLink to="/dashboard/artisan/growth-requests" variant="secondary">
+          {t('focus.viewPilotHistory')}
+        </ButtonLink>
       </Card>
     </section>
   );

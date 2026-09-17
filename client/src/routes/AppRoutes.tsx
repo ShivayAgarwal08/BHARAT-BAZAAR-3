@@ -145,6 +145,8 @@ export function AppRoutes() {
                   <Route path="users" element={<AdminUsersPage />} />
                   <Route path="growth-requests" element={<AdminGrowthRequestsPage />} />
                   <Route path="growth-requests/:id" element={<AdminGrowthRequestDetailPage />} />
+                  <Route path="matching" element={<AdminGrowthRequestsPage />} />
+                  <Route path="matching/:id" element={<AdminGrowthRequestDetailPage />} />
                   <Route path="assignments/:id" element={<AdminAssignmentPage />} />
                   <Route
                     path="paid-assignments"
