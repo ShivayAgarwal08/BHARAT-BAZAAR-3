@@ -74,7 +74,12 @@ async function onboard(page: Page, role: 'artisan' | 'student') {
       exact: true,
     })
     .click();
-  await expect(page.getByRole('heading', { name: 'Profile complete', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('heading', {
+      name: role === 'artisan' ? 'Profile complete' : 'Pending verification',
+      exact: true,
+    }),
+  ).toBeVisible();
   await noOverflow(page);
   await page.getByRole('link', { name: 'Go to my workspace', exact: true }).click();
   await expect(page).toHaveURL(new RegExp('/dashboard/' + role + '$'));
@@ -108,9 +113,29 @@ test('artisan registration, draft restoration, Hindi onboarding, session restora
   await page.getByRole('button', { name: 'Log in', exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard\/artisan$/);
 });
-test('student registration, skill selection and pending verification', async ({ page }, info) => {
+test('student verification submission persists after profile refetch', async ({
+  page,
+  request,
+}, info) => {
   await register(page, 'student', account());
   await onboard(page, 'student');
+  const token = await page.evaluate(() => localStorage.getItem('bharat-bazaar-token'));
+  const profile = await request.get('http://127.0.0.1:5101/api/v1/students/me', {
+    headers: { Authorization: 'Bearer ' + token },
+  });
+  expect(profile.ok()).toBe(true);
+  expect(await profile.json()).toMatchObject({
+    success: true,
+    message: 'Request completed.',
+    data: expect.objectContaining({ onboardingCompleted: true, verificationStatus: 'PENDING' }),
+  });
+  await page.goto('/dashboard/student/profile');
+  await expect(
+    page.getByRole('heading', { name: 'Pending verification', exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Submit for verification', exact: true }),
+  ).toHaveCount(0);
   await expect(page.getByText('Pending', { exact: true })).toBeVisible();
   await noOverflow(page);
   const results = await new AxeBuilder({ page })

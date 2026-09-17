@@ -6,7 +6,7 @@ import { usePageTitle } from '../hooks/usePageTitle';
 import { api } from '../services/api';
 import { Badge, Button, ButtonLink, Card, Loading } from '../components/ui';
 import { ErrorNotice, FormActions, FormField } from '../components/FormControls';
-import type { Profile, SelectedSkill, Skill } from '../types';
+import type { ApiResponse, Profile, SelectedSkill, Skill } from '../types';
 
 type OnboardingRole = 'artisan' | 'student';
 const firstFields = {
@@ -61,10 +61,12 @@ function ProfileEditor({
   role,
   profile,
   available,
+  onProfileSaved,
 }: {
   role: OnboardingRole;
   profile: Profile;
   available: Skill[];
+  onProfileSaved: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const { refreshUser } = useAuth();
@@ -106,12 +108,17 @@ function ProfileEditor({
     }
     if (step === 2 && role === 'student') payload.skills = selected;
     try {
-      await api.put('/' + role + 's/me', payload);
+      const response = await api.put<ApiResponse<Profile>>('/' + role + 's/me', payload);
       await refreshUser();
       if (step === 1) {
         setStep(2);
         setSaved(true);
-      } else setDone(true);
+      } else if (role !== 'student' || response.data.data.verificationStatus === 'PENDING') {
+        setDone(true);
+        if (role === 'student') onProfileSaved();
+      } else {
+        setError(new Error('Unexpected verification status after submission.'));
+      }
       window.scrollTo({ top: 0, behavior: 'instant' });
     } catch (problem) {
       setError(problem);
@@ -119,6 +126,23 @@ function ProfileEditor({
       setBusy(false);
     }
   }
+  const submittedForVerification =
+    role === 'student' && profile.onboardingCompleted && profile.verificationStatus === 'PENDING';
+  const verified =
+    role === 'student' && profile.onboardingCompleted && profile.verificationStatus === 'VERIFIED';
+  if (submittedForVerification || verified)
+    return (
+      <Card className="form-card">
+        <div className="completion-panel" role="status">
+          <Badge tone={verified ? 'green' : 'warm'}>
+            {t('p2.status.' + profile.verificationStatus)}
+          </Badge>
+          <h2>{t(verified ? 'p2.status.VERIFIED' : 'p2.pendingVerification')}</h2>
+          <p>{t(verified ? 'p2.verifiedText' : 'p2.pendingText')}</p>
+          <ButtonLink to="/dashboard/student">{t('p2.goDashboard')}</ButtonLink>
+        </div>
+      </Card>
+    );
   if (done)
     return (
       <Card className="form-card">
@@ -153,8 +177,12 @@ function ProfileEditor({
             {t('p2.draftSaved')}
           </p>
         )}
-        {role === 'student' && profile.verificationStatus === 'VERIFIED' && (
-          <p className="notice">{t('p2.editReviewNote')}</p>
+        {role === 'student' && profile.verificationStatus === 'REJECTED' && (
+          <>
+            <Badge>{t('p2.status.REJECTED')}</Badge>
+            <p className="notice">{t('p2.rejectedText')}</p>
+            {profile.verificationNotes && <p className="notice">{profile.verificationNotes}</p>}
+          </>
         )}
         <ErrorNotice error={error} />
         <div className="form-grid">
@@ -256,7 +284,9 @@ function ProfileEditor({
             step === 1
               ? 'p2.saveContinue'
               : role === 'student'
-                ? 'p2.submitReview'
+                ? profile.verificationStatus === 'REJECTED'
+                  ? 'p2.resubmitReview'
+                  : 'p2.submitReview'
                 : 'p2.finishOnboarding',
           )}
         </FormActions>
@@ -319,6 +349,7 @@ export function OnboardingPage({
             role={role}
             profile={profile.data}
             available={skills.data ?? []}
+            onProfileSaved={profile.reload}
           />
         )
       )}

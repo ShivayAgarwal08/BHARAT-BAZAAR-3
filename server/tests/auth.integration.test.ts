@@ -269,6 +269,12 @@ test(
             })
             .expect(200);
           assert.equal(result.body.data.verificationStatus, 'PENDING');
+          const reloaded = await request(app)
+            .get('/api/v1/students/me')
+            .set(auth(studentToken))
+            .expect(200);
+          assert.equal(reloaded.body.data.onboardingCompleted, true);
+          assert.equal(reloaded.body.data.verificationStatus, 'PENDING');
           assert.equal(
             (await request(app).get('/api/v1/students/me').set(auth(student2Token))).body.data
               .college,
