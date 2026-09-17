@@ -99,6 +99,37 @@ async function assignmentWithPeople(db: Database, id: string) {
     throw new AppError(409, 'Assignment profile data is unavailable.', 'ASSIGNMENT_INVALID');
   return { assignment, artisan, student };
 }
+
+// Engagement summaries are shared with the other participant. Keep the response
+// limited to work context instead of exposing addresses or internal owner IDs.
+function artisanEngagementProfile(profile: typeof artisanProfiles.$inferSelect) {
+  return {
+    id: profile.id,
+    fullName: profile.fullName,
+    businessName: profile.businessName,
+    craftCategory: profile.craftCategory,
+    city: profile.city,
+    state: profile.state,
+    languages: profile.languages,
+    biography: profile.biography,
+  };
+}
+function studentEngagementProfile(profile: typeof studentProfiles.$inferSelect) {
+  return {
+    id: profile.id,
+    fullName: profile.fullName,
+    college: profile.college,
+    course: profile.course,
+    studyYear: profile.studyYear,
+    city: profile.city,
+    state: profile.state,
+    languages: profile.languages,
+    biography: profile.biography,
+    weeklyAvailabilityHours: profile.weeklyAvailabilityHours,
+    expectedMonthlyRate: profile.expectedMonthlyRate,
+    portfolioUrl: profile.portfolioUrl,
+  };
+}
 async function assignmentForStudent(db: Database, id: string, userId: string) {
   const { assignment, artisan, student } = await assignmentWithPeople(db, id);
   if (student.userId !== userId)
@@ -924,11 +955,51 @@ export async function adminAssignmentProgress(db: Database, assignmentId: string
   const taskGroups = contract[0] ? await tasksForContract(db, contract[0].id) : [];
   const metricRows = contract[0] ? await listMetrics(db, contract[0].id) : [];
   return {
-    ...people,
+    assignment: people.assignment,
+    artisan: artisanEngagementProfile(people.artisan),
+    student: studentEngagementProfile(people.student),
     request: request ?? null,
     discovery: discovery[0] ?? null,
     contract: contract[0] ?? null,
     milestones: taskGroups,
     metrics: metricRows,
   };
+}
+
+// Member dashboards intentionally consume one engagement-shaped response instead of
+// exposing assignment, discovery, contract, task and metric records as separate concepts.
+async function engagementSummary(db: Database, assignmentId: string) {
+  return adminAssignmentProgress(db, assignmentId);
+}
+
+export async function currentEngagementForArtisan(db: Database, userId: string) {
+  const artisan = await artisanForUser(db, userId);
+  const [assignment] = await db
+    .select({ id: assignments.id })
+    .from(assignments)
+    .where(
+      and(
+        eq(assignments.artisanProfileId, artisan.id),
+        inArray(assignments.status, activeAssignmentStatuses),
+      ),
+    )
+    .orderBy(desc(assignments.updatedAt))
+    .limit(1);
+  return assignment ? engagementSummary(db, assignment.id) : null;
+}
+
+export async function currentEngagementForStudent(db: Database, userId: string) {
+  const student = await studentForUser(db, userId);
+  const [assignment] = await db
+    .select({ id: assignments.id })
+    .from(assignments)
+    .where(
+      and(
+        eq(assignments.studentProfileId, student.id),
+        inArray(assignments.status, activeAssignmentStatuses),
+      ),
+    )
+    .orderBy(desc(assignments.updatedAt))
+    .limit(1);
+  return assignment ? engagementSummary(db, assignment.id) : null;
 }

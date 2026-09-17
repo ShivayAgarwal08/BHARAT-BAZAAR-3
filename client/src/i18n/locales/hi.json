@@ -250,11 +250,17 @@
     "adminNote": "एडमिन विकल्प केवल डेमो कार्यक्षेत्र है, सार्वजनिक एडमिन पंजीकरण नहीं।"
   },
   "dashboard": {
+    "home": "होम",
     "marketplace": "मार्केटप्लेस",
     "marketplaceRequests": "रुचि अनुरोध",
     "workspace": "कार्यक्षेत्र",
     "overview": "अवलोकन",
     "myManager": "मेरे मैनेजर",
+    "findManager": "मैनेजर खोजें",
+    "myGrowth": "मेरी प्रगति",
+    "myArtisan": "मेरे कारीगर",
+    "opportunities": "अवसर",
+    "help": "सहायता",
     "growthRequests": "विकास अनुरोध",
     "contract": "अनुबंध",
     "milestones": "पड़ाव",

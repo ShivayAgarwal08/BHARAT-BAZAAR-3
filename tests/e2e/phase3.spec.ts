@@ -4,10 +4,12 @@ import { expect, test } from '@playwright/test';
 // authorization and state transitions remain covered by the server integration suite.
 test('Phase 3 workspace routes remain protected and reachable through login', async ({ page }) => {
   for (const route of [
-    '/dashboard/artisan/growth-requests',
+    '/dashboard/artisan/my-manager',
+    '/dashboard/artisan/find-manager',
+    '/dashboard/artisan/my-growth',
     '/dashboard/admin/growth-requests',
-    '/dashboard/student/current-artisan',
-    '/dashboard/student/assignment/example/discovery',
+    '/dashboard/student/my-artisan',
+    '/dashboard/student/opportunities',
     '/dashboard/artisan/contract/example/tasks',
   ]) {
     await page.goto(route);

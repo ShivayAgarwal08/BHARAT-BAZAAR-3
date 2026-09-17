@@ -1795,6 +1795,55 @@ body:has(dialog[open]) {
   gap: 22px;
   margin-top: 24px;
 }
+.engagement-payment-context {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+.engagement-payment-context p {
+  margin: 0;
+}
+.check-list {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+.check-list li {
+  align-items: center;
+  border-top: 1px solid #e8e0d2;
+  display: flex;
+  gap: 10px;
+  padding-top: 10px;
+}
+.engagement-metrics {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 18px;
+}
+.metric-card {
+  padding: 16px;
+}
+.metric-card p,
+.metric-card span {
+  color: #65685e;
+  display: block;
+  font-size: 13px;
+  margin: 0;
+}
+.metric-card strong {
+  color: #333b31;
+  display: block;
+  font-size: 22px;
+  margin: 8px 0;
+}
+@media (max-width: 640px) {
+  .engagement-metrics {
+    grid-template-columns: 1fr;
+  }
+}
 .focus-card,
 .activity-card {
   padding: 25px;

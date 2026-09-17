@@ -35,6 +35,9 @@ export function trialControllers(db: Database) {
     artisanRequests: action<undefined, z.output<typeof growthRequestFilter>>(({ actor, query }) =>
       trial.listGrowthRequests(db, actor.id, query),
     ),
+    artisanCurrentEngagement: action(({ actor }) =>
+      trial.currentEngagementForArtisan(db, actor.id),
+    ),
     createRequest: action<z.output<typeof growthRequestSchema>>(
       ({ actor, body }) => trial.createGrowthRequest(db, actor.id, body),
       201,
@@ -64,6 +67,9 @@ export function trialControllers(db: Database) {
       trial.artisanReviewTask(db, actor.id, params.id, body),
     ),
     assignments: action(({ actor }) => trial.studentAssignments(db, actor.id)),
+    studentCurrentEngagement: action(({ actor }) =>
+      trial.currentEngagementForStudent(db, actor.id),
+    ),
     acceptAssignment: action(({ actor, params }) =>
       trial.acceptAssignment(db, actor.id, params.id),
     ),

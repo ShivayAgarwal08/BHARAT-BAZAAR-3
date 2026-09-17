@@ -221,6 +221,20 @@ test(
             .send({})
             .expect(200);
           assert.equal(active.body.data.status, 'ACTIVE');
+          assert.equal(active.body.data.contractType, 'FREE_TRIAL');
+          assert.equal(Number(active.body.data.artisanPaymentAmount), 0);
+          const artisanEngagement = await request(app)
+            .get('/api/v1/artisans/me/current-engagement')
+            .set(auth(artisanToken))
+            .expect(200);
+          assert.equal(artisanEngagement.body.data.assignment.id, assignmentId);
+          assert.equal(artisanEngagement.body.data.contract.artisanPaymentAmount, '0.00');
+          const studentEngagement = await request(app)
+            .get('/api/v1/students/me/current-engagement')
+            .set(auth(studentToken))
+            .expect(200);
+          assert.equal(studentEngagement.body.data.assignment.id, assignmentId);
+          assert.equal('address' in studentEngagement.body.data.artisan, false);
         },
       );
       await t.test('tasks and metrics stay with contract participants', async () => {

@@ -74,6 +74,8 @@ Common codes: VALIDATION_ERROR, INVALID_CREDENTIALS, UNAUTHENTICATED, FORBIDDEN,
 
 | Method       | Path (after `/api/v1`)                                                        | Access           | Purpose                                 |
 | ------------ | ----------------------------------------------------------------------------- | ---------------- | --------------------------------------- |
+| GET          | `/artisans/me/current-engagement`                                             | ARTISAN owner    | Product-shaped active manager summary   |
+| GET          | `/students/me/current-engagement`                                             | STUDENT owner    | Product-shaped active artisan summary   |
 | GET/POST     | `/artisans/me/growth-requests`                                                | ARTISAN          | List/create owned requests              |
 | GET/PUT      | `/artisans/me/growth-requests/:id`                                            | ARTISAN owner    | View/edit a draft                       |
 | POST         | `/artisans/me/growth-requests/:id/submit`                                     | ARTISAN owner    | Submit request                          |

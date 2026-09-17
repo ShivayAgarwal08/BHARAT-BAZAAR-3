@@ -33,10 +33,10 @@
     "titleOne": "Artisans create.",
     "titleTwo": "Students grow.",
     "titleThree": "We connect.",
-    "subtitle": "A multilingual platform helping artisans access student digital managers while students gain verified experience and paid opportunities.",
+    "subtitle": "Local artisans focus on creating. College students help with social media, online selling, shipping and technology.",
     "artisanCta": "I’m an artisan",
     "studentCta": "I’m a student",
-    "heroNote": "Your craft. Their skills. A shared way forward.",
+    "heroNote": "Your first growth manager is sponsored by Bharat Bazaar.",
     "artCaption": "Made by hand. Ready for the world.",
     "artSubcaption": "A new chapter for local craft",
     "floatTitle": "A partnership with purpose",
@@ -45,19 +45,19 @@
     "trustStrip": ["Human-led matching", "Support at every step", "English & हिन्दी"],
     "howEyebrow": "GOOD THINGS GROW TOGETHER",
     "howTitle": "From local talent to shared growth.",
-    "howDescription": "More than an introduction. A guided partnership, from the first conversation to the next milestone.",
+    "howDescription": "A guided partnership from the first business-help request to practical progress.",
     "steps": [
       {
-        "title": "Tell us your story",
-        "description": "Artisans share their craft and goals. Students share their skills, interests and availability."
+        "title": "Tell us what you need",
+        "description": "Artisans share their business need. Students share their practical skills and availability."
       },
       {
-        "title": "Find your growth partner",
-        "description": "The platform helps verify profiles and match people around language, skills and real business needs."
+        "title": "Start with a sponsored pilot",
+        "description": "Bharat Bazaar reviews the request, matches a verified student manager and sponsors the first pilot."
       },
       {
-        "title": "Build something together",
-        "description": "Agree on the work, track milestones and get support as your partnership moves forward."
+        "title": "Build real growth together",
+        "description": "Agree the work after business discovery, complete practical tasks and track change during the engagement."
       }
     ],
     "benefitEyebrow": "TWO TALENTS. ONE SHARED JOURNEY.",
@@ -134,7 +134,7 @@
         "description": "Managed reviews, help and a structured path to resolve disputes."
       }
     ],
-    "trustNote": "Registration, profiles and admin verification are active. Matching, contracts, progress and payment records are planned for later phases.",
+    "trustNote": "Bharat Bazaar does not process money. Later artisan-paid engagements are paid externally and recorded only for confirmation and support.",
     "ctaTitle": "Let’s grow something\nmeaningful, together.",
     "ctaText": "Whether you work with your hands or bring digital skills, there’s a place for you here.",
     "ctaButton": "Find your place"
@@ -250,11 +250,17 @@
     "adminNote": "The admin option is a demo workspace, not public admin registration."
   },
   "dashboard": {
+    "home": "Home",
     "marketplace": "Marketplace",
     "marketplaceRequests": "Interest requests",
     "workspace": "Workspace",
     "overview": "Overview",
     "myManager": "My Manager",
+    "findManager": "Find a Manager",
+    "myGrowth": "My Growth",
+    "myArtisan": "My Artisan",
+    "opportunities": "Opportunities",
+    "help": "Help",
     "growthRequests": "Growth Requests",
     "contract": "Contract",
     "milestones": "Milestones",

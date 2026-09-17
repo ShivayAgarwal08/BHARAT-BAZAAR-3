@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useRemoteData } from '../../hooks/useRemoteData';
 import { api } from '../../services/api';
 import { Button, ButtonLink, Card, EmptyState, Loading } from '../../components/ui';
@@ -18,6 +19,7 @@ type Student = {
   averageRating: number | null;
 };
 export function MarketplacePage() {
+  const { t } = useTranslation();
   const data = useRemoteData<{ items: Student[] }>('/marketplace/students?page=1&limit=30');
   const [chosen, setChosen] = useState<string | null>(null);
   const [error, setError] = useState<unknown>(null);
@@ -45,8 +47,8 @@ export function MarketplacePage() {
   if (data.error) return <ErrorNotice error={data.error} />;
   return (
     <section>
-      <h2>Verified student managers</h2>
-      <p className="page-intro">Send an interest request. Payments stay outside Bharat Bazaar.</p>
+      <h2>{t('focus.verifiedManagers')}</h2>
+      <p className="page-intro">{t('focus.findManagerIntro')}</p>
       <div className="record-list">
         {data.data?.items.length ? (
           data.data.items.map((s) => (
@@ -65,37 +67,34 @@ export function MarketplacePage() {
               </div>
               <div className="form-actions">
                 <ButtonLink variant="secondary" to={s.id}>
-                  View profile
+                  {t('focus.viewProfile')}
                 </ButtonLink>
-                <Button onClick={() => setChosen(s.id)}>Send interest</Button>
+                <Button onClick={() => setChosen(s.id)}>{t('focus.sendInterest')}</Button>
               </div>
             </Card>
           ))
         ) : (
-          <EmptyState
-            title="No verified students found"
-            description="Try again after student verification."
-          />
+          <EmptyState title={t('focus.noManagers')} description={t('focus.noManagersText')} />
         )}
       </div>
       {chosen && (
         <Card className="form-card">
-          <h3>Interest request</h3>
+          <h3>{t('focus.interestRequest')}</h3>
           <ErrorNotice error={error} />
           <form onSubmit={send}>
-            <FormField name="message" label="Message" required />
-            <FormField name="services" label="Services needed (comma separated)" required />
+            <FormField name="message" label={t('focus.message')} required />
+            <FormField name="services" label={t('focus.servicesNeeded')} required />
             <FormField
               name="duration"
               type="number"
               min={1}
               max={12}
               defaultValue={3}
-              label="Months"
+              label={t('focus.months')}
               required
             />
-            <FormField name="budget" type="number" min={1} label="Proposed monthly budget" />
-            <FormActions busy={false}>Send request</FormActions>
+            <FormField name="budget" type="number" min={1} label={t('focus.proposedBudget')} />
+            <FormActions busy={false}>{t('focus.sendInterest')}</FormActions>
           </form>
         </Card>
       )}
@@ -104,6 +103,7 @@ export function MarketplacePage() {
 }
 
 export function StudentMarketplaceProfilePage() {
+  const { t } = useTranslation();
   const { id = '' } = useParams();
   const data = useRemoteData<Student>('/marketplace/students/' + id);
   const [error, setError] = useState<unknown>(null);
@@ -124,7 +124,7 @@ export function StudentMarketplaceProfilePage() {
         proposedDurationMonths: Number(form.get('duration')),
         proposedMonthlyBudget: Number(form.get('budget')) || null,
       });
-      location.assign('/dashboard/artisan/marketplace-requests');
+      location.assign('/dashboard/artisan/find-manager');
     } catch (problem) {
       setError(problem);
     } finally {
@@ -136,28 +136,32 @@ export function StudentMarketplaceProfilePage() {
   const student = data.data;
   return (
     <section>
-      <Link className="text-link" to="/dashboard/artisan/marketplace">
-        Back to marketplace
+      <Link className="text-link" to="/dashboard/artisan/find-manager">
+        {t('focus.backToManagers')}
       </Link>
       <Card className="form-card">
         <h2>{student.fullName}</h2>
         <p>{[student.college, student.course].filter(Boolean).join(' · ')}</p>
         <dl className="profile-details">
           <div>
-            <dt>Skills</dt>
+            <dt>{t('focus.skills')}</dt>
             <dd>
               {student.skills
                 .map((skill) => `${skill.name} (${skill.proficiencyLevel})`)
-                .join(', ') || 'Not listed'}
+                .join(', ') || t('focus.notListed')}
             </dd>
           </div>
           <div>
-            <dt>Languages</dt>
-            <dd>{student.languages.join(', ') || 'Not listed'}</dd>
+            <dt>{t('focus.languages')}</dt>
+            <dd>{student.languages.join(', ') || t('focus.notListed')}</dd>
           </div>
           <div>
-            <dt>Availability</dt>
-            <dd>{student.weeklyAvailabilityHours ?? 'Not listed'} hours/week</dd>
+            <dt>{t('focus.availability')}</dt>
+            <dd>
+              {student.weeklyAvailabilityHours === null
+                ? t('focus.notListed')
+                : t('focus.hoursPerWeek', { hours: student.weeklyAvailabilityHours })}
+            </dd>
           </div>
           <div>
             <dt>Expected monthly rate</dt>
@@ -166,30 +170,28 @@ export function StudentMarketplaceProfilePage() {
         </dl>
         {student.portfolioUrl && (
           <a className="text-link" href={student.portfolioUrl} target="_blank" rel="noreferrer">
-            View portfolio
+            {t('dashboard.portfolio')}
           </a>
         )}
       </Card>
       <Card className="form-card">
-        <h2>Send an interest request</h2>
-        <p className="page-intro">
-          Contact details stay private. Payments happen outside Bharat Bazaar.
-        </p>
+        <h2>{t('focus.sendInterest')}</h2>
+        <p className="page-intro">{t('focus.privateContacts')}</p>
         <ErrorNotice error={error} />
         <form onSubmit={send}>
-          <FormField name="message" label="Message" required maxLength={2000} />
-          <FormField name="services" label="Services needed (comma separated)" required />
+          <FormField name="message" label={t('focus.message')} required maxLength={2000} />
+          <FormField name="services" label={t('focus.servicesNeeded')} required />
           <FormField
             name="duration"
-            label="Duration in months"
+            label={t('focus.durationMonths')}
             type="number"
             min={1}
             max={12}
             defaultValue={3}
             required
           />
-          <FormField name="budget" label="Proposed monthly budget" type="number" min={1} />
-          <FormActions busy={busy}>Send request</FormActions>
+          <FormField name="budget" label={t('focus.proposedBudget')} type="number" min={1} />
+          <FormActions busy={busy}>{t('focus.sendInterest')}</FormActions>
         </form>
       </Card>
     </section>
@@ -197,6 +199,7 @@ export function StudentMarketplaceProfilePage() {
 }
 
 export function ArtisanMarketplaceRequestsPage() {
+  const { t } = useTranslation();
   const data = useRemoteData<
     Array<{
       request: {
@@ -216,10 +219,10 @@ export function ArtisanMarketplaceRequestsPage() {
   if (!data.data?.length)
     return (
       <EmptyState
-        title="No marketplace requests yet"
-        description="Browse verified student managers to send your first interest request."
+        title={t('focus.noMarketplaceRequests')}
+        description={t('focus.noMarketplaceRequestsText')}
       >
-        <ButtonLink to="/dashboard/artisan/marketplace">Browse marketplace</ButtonLink>
+        <ButtonLink to="/dashboard/artisan/find-manager">{t('focus.browseManagers')}</ButtonLink>
       </EmptyState>
     );
   return (
@@ -233,19 +236,25 @@ export function ArtisanMarketplaceRequestsPage() {
               <p>{request.requestedServices.join(', ')}</p>
               <p>{request.message}</p>
               <p>
-                Budget:{' '}
+                {t('focus.budget')}:{' '}
                 {request.proposedMonthlyBudget
                   ? `₹${request.proposedMonthlyBudget}/month`
-                  : 'Not proposed'}
+                  : t('focus.notProposed')}
               </p>
-              <p>Sent: {new Date(request.createdAt).toLocaleDateString()}</p>
               <p>
-                Status: <strong>{request.status.replaceAll('_', ' ')}</strong>
+                {t('focus.sent')}: {new Date(request.createdAt).toLocaleDateString()}
               </p>
-              {request.studentResponse && <p>Student response: {request.studentResponse}</p>}
+              <p>
+                {t('focus.status')}: <strong>{request.status.replaceAll('_', ' ')}</strong>
+              </p>
+              {request.studentResponse && (
+                <p>
+                  {t('focus.studentResponse')}: {request.studentResponse}
+                </p>
+              )}
             </div>
-            <ButtonLink variant="secondary" to={`/dashboard/artisan/marketplace/${student.id}`}>
-              View profile
+            <ButtonLink variant="secondary" to={`/dashboard/artisan/find-manager/${student.id}`}>
+              {t('focus.viewProfile')}
             </ButtonLink>
           </Card>
         ))}
@@ -254,6 +263,7 @@ export function ArtisanMarketplaceRequestsPage() {
   );
 }
 export function StudentInterestPage() {
+  const { t } = useTranslation();
   const data = useRemoteData<
     Array<{
       request: { id: string; message: string; status: string; requestedServices: string[] };
@@ -264,7 +274,7 @@ export function StudentInterestPage() {
   if (data.error) return <ErrorNotice error={data.error} />;
   return (
     <section>
-      <h2>Marketplace interest requests</h2>
+      <h2>{t('focus.opportunityRequests')}</h2>
       <div className="record-list">
         {data.data?.map(({ request, artisan }) => (
           <Card className="record-card" key={request.id}>
@@ -285,7 +295,7 @@ export function StudentInterestPage() {
                       .then(() => location.reload())
                   }
                 >
-                  Accept
+                  {t('focus.accept')}
                 </Button>
                 <Button
                   variant="secondary"
@@ -297,7 +307,7 @@ export function StudentInterestPage() {
                       .then(() => location.reload())
                   }
                 >
-                  Decline
+                  {t('focus.decline')}
                 </Button>
               </div>
             )}

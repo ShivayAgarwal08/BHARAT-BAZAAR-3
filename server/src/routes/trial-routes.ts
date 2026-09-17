@@ -44,6 +44,13 @@ export function trialRoutes(db: Database, config: Environment) {
     envelope(undefined, growthRequestFilter),
     c.artisanRequests,
   );
+  router.get(
+    '/artisans/me/current-engagement',
+    auth,
+    artisan,
+    envelope(),
+    c.artisanCurrentEngagement,
+  );
   router.post(
     '/artisans/me/growth-requests',
     auth,
@@ -115,6 +122,13 @@ export function trialRoutes(db: Database, config: Environment) {
     c.reviewTask,
   );
   router.get('/students/me/assignments', auth, student, envelope(), c.assignments);
+  router.get(
+    '/students/me/current-engagement',
+    auth,
+    student,
+    envelope(),
+    c.studentCurrentEngagement,
+  );
   router.post(
     '/students/me/assignments/:id/accept',
     auth,

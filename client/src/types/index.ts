@@ -187,3 +187,33 @@ export interface TrialMilestone {
   status: string;
   tasks: TrialTask[];
 }
+
+export interface BusinessMetric {
+  id: string;
+  type: 'BASELINE' | 'PROGRESS' | 'FINAL';
+  measurementDate: string;
+  monthlyRevenue: string | null;
+  monthlyOrders: number | null;
+  onlineOrders: number | null;
+  socialFollowers: number | null;
+  customerEnquiries: number | null;
+  productsListedOnline: number | null;
+  notes: string | null;
+}
+
+export interface EngagementContract extends TrialContract {
+  contractType: 'FREE_TRIAL' | 'PAID';
+  artisanPaymentAmount: string;
+  platformStudentStipend: string | null;
+}
+
+export interface CurrentEngagement {
+  assignment: Assignment & { type: 'FREE_TRIAL' | 'PAID' };
+  artisan: Profile;
+  student: Profile;
+  request: GrowthRequest | null;
+  discovery: DiscoveryReport | null;
+  contract: EngagementContract | null;
+  milestones: TrialMilestone[];
+  metrics: BusinessMetric[];
+}

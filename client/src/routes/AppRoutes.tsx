@@ -18,6 +18,13 @@ import { OnboardingPage } from '../pages/OnboardingPage';
 import { AssistedRegistrationPage } from '../pages/AssistedRegistrationPage';
 import { UnauthorizedPage } from '../pages/UnauthorizedPage';
 import {
+  ArtisanHomePage,
+  MyArtisanPage,
+  MyGrowthPage,
+  MyManagerPage,
+  StudentHomePage,
+} from '../pages/dashboard/FocusedEngagementPages';
+import {
   AdminStudentsPage,
   AdminStudentDetailPage,
   AdminAssistancePage,
@@ -114,7 +121,18 @@ export function AppRoutes() {
         {(['artisan', 'student', 'admin'] as const).map((role) => (
           <Route element={<ProtectedRoute role={role} />} key={role}>
             <Route path={`dashboard/${role}`} element={<DashboardLayout role={role} />}>
-              <Route index element={<OverviewPage role={role} />} />
+              <Route
+                index
+                element={
+                  role === 'artisan' ? (
+                    <ArtisanHomePage />
+                  ) : role === 'student' ? (
+                    <StudentHomePage />
+                  ) : (
+                    <OverviewPage role={role} />
+                  )
+                }
+              />
               {role !== 'admin' && (
                 <Route path="profile" element={<OnboardingPage role={role} embedded />} />
               )}
@@ -160,6 +178,12 @@ export function AppRoutes() {
               )}
               {role === 'artisan' && (
                 <>
+                  <Route path="my-manager" element={<MyManagerPage />} />
+                  <Route path="find-manager" element={<MarketplacePage />} />
+                  <Route path="find-manager/:id" element={<StudentMarketplaceProfilePage />} />
+                  <Route path="my-growth" element={<MyGrowthPage />} />
+                  <Route path="my-growth/new" element={<ArtisanRequestFormPage />} />
+                  <Route path="help" element={<AssistedRegistrationPage />} />
                   <Route path="growth-requests" element={<ArtisanGrowthRequestsPage />} />
                   <Route path="growth-requests/new" element={<ArtisanRequestFormPage />} />
                   <Route path="growth-requests/:id" element={<ArtisanRequestDetailPage />} />
@@ -187,6 +211,8 @@ export function AppRoutes() {
               )}
               {role === 'student' && (
                 <>
+                  <Route path="my-artisan" element={<MyArtisanPage />} />
+                  <Route path="opportunities" element={<StudentInterestPage />} />
                   <Route path="current-artisan" element={<StudentAssignmentsPage />} />
                   <Route path="assignment/:id" element={<DiscoveryPage />} />
                   <Route path="assignment/:id/discovery" element={<DiscoveryPage />} />
@@ -218,6 +244,7 @@ export function AppRoutes() {
               {dashboardSections[role]
                 .filter(
                   (section) =>
+                    role === 'admin' &&
                     section.slug &&
                     section.slug !== 'profile' &&
                     !(
